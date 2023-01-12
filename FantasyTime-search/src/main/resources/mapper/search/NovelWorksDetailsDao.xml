@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xu.search.dao.NovelWorksDetailsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.xu.search.entity.NovelWorksDetailsEntity" id="novelWorksDetailsMap">
+        <result property="id" column="id"/>
+        <result property="worksId" column="works_id"/>
+        <result property="novelChapterId" column="novel_chapter_id"/>
+        <result property="novelChapterName" column="novel_chapter_name"/>
+        <result property="novelPages" column="novel_pages"/>
+        <result property="createTime" column="create_time"/>
+        <result property="editTime" column="edit_time"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+
+</mapper>

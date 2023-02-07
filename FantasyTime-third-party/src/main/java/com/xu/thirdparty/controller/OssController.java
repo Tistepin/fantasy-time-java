@@ -21,6 +21,8 @@ import java.io.InputStream;
 public class OssController {
     @Autowired
     private FileService fileService;
+
+
     @PostMapping("/oss/policy2")
     public R policy2(
             //@ApiParam(value = "文件", required = true)
@@ -47,23 +49,25 @@ public class OssController {
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "WorksId", value = "作品id", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-                    @ApiImplicitParam(name = "WorksChapterId", value = "作品章节Id", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-                    @ApiImplicitParam(name = "ImageId", value = "图片ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+                    @ApiImplicitParam(name = "WorksChapterId", value = "作品章节Id", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = false),
+                    // 0 不是 1 是
+                    @ApiImplicitParam(name = "ImageDefaultStatus", value = "是否是作品封面", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "ImageId", value = "图片ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = false)
 
             }
     )
     @ApiResponses({
-            @ApiResponse(code = 200, message = "請求成功", response = R.class)
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getWorkContent")
-    public R GetWorkContent(
+    public void GetWorkContent(
             @RequestParam Integer WorksId,
-            @RequestParam Integer WorksChapterId,
-            @RequestParam Integer ImageId,
+            @RequestParam(required = false) Integer WorksChapterId,
+            @RequestParam(required = false) Integer ImageId,
+            @RequestParam Integer ImageDefaultStatus,
              HttpServletResponse response
     ) throws IOException {
-        fileService.GetWorkContent(WorksId,WorksChapterId,ImageId,response);
+        fileService.GetWorkContent(WorksId,WorksChapterId,ImageId,response,ImageDefaultStatus);
 
-        return R.ok();
     }
 }

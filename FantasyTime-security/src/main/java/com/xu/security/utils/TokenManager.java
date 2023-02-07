@@ -36,11 +36,12 @@ public class TokenManager {
                 .compressWith(CompressionCodecs.GZIP).compact();
     }
 
-    // 2.根据Token获取用户信息
+    // 2.根据Token获取用户信息Name
     public String getUserFromToken(String token) {
         return Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody().getSubject();
     }
     public void removeToken(String token) {
         //jwttoken无需删除，
     }
+
 }

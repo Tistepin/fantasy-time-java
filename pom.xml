@@ -10,10 +10,11 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>FantasyTime-security</module>
-        <module>FantasyTime-search</module>
+        <module>FantasyTime-works</module>
         <module>FantasyTime-common</module>
         <module>FantasyTime-gateway</module>
         <module>FantasyTime-third-party</module>
+        <module>FantasyTime-search</module>
     </modules>
     <name>FantasyTime</name>
     <description>幻想时间 二次元漫画网站后台--java版本</description>

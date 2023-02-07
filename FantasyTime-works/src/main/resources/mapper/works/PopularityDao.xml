@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xu.works.dao.PopularityDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.xu.works.entity.PopularityEntity" id="popularityMap">
+        <result property="id" column="id"/>
+        <result property="worksId" column="works_id"/>
+        <result property="name" column="name"/>
+        <result property="worksType" column="works_type"/>
+        <result property="worksStatus" column="works_status"/>
+        <result property="worksPopularityCount" column="works_popularity_count"/>
+        <result property="worksPopularityToday" column="works_popularity_today"/>
+        <result property="worksPopularityThreeDays" column="works_popularity_three_days"/>
+        <result property="worksPopularityThisweek" column="works_popularity_thisWeek"/>
+        <result property="worksPopularityThismonth" column="works_popularity_thisMonth"/>
+        <result property="deleteStatus" column="delete_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="editTime" column="edit_time"/>
+    </resultMap>
+    <select id="getPopularityTop" resultType="java.lang.String">
+        SELECT works_id
+        FROM (
+                 SELECT *
+                 FROM ft_popularity
+                 where works_status = 1 and works_type = #{worksType}
+                 order by works_popularity_count desc
+                 limit 100
+             ) ft_works
+        WHERE  delete_status = 1 and ft_works.id >=
+              FLOOR(RAND() * ((SELECT MAX(U1.id) FROM ft_popularity AS U1) - (SELECT MIN(U2.id) FROM ft_popularity AS U2))
+                  + (SELECT MIN(U3.id) FROM ft_popularity AS U3))
+        LIMIT 10;
+    </select>
+    <select id="getDailyLeaderboardTop" resultType="java.lang.String">
+        SELECT works_id
+        FROM ft_popularity
+        where works_type = #{worksType}
+          and delete_status = 1
+        order by works_popularity_today desc
+        limit 10;
+    </select>
+    <select id="getthreeDaysLeaderboard" resultType="java.lang.String">
+        SELECT works_id
+        FROM ft_popularity
+        where works_type = #{worksType}
+          and delete_status = 1
+        order by works_popularity_three_days desc
+        limit 10;
+    </select>
+    <select id="getthisWeekLeaderboard" resultType="java.lang.String">
+        SELECT works_id
+        FROM ft_popularity
+        where works_type = #{worksType}
+          and delete_status = 1
+        order by works_popularity_thisWeek desc
+        limit 10;
+    </select>
+    <select id="getthisMonthDaysLeaderboard" resultType="java.lang.String">
+        SELECT works_id
+        FROM ft_popularity
+        where works_type = #{worksType}
+          and delete_status = 1
+        order by works_popularity_thisMonth desc
+        limit 10;
+    </select>
+    <update id="updateByWorksId"></update>
+
+</mapper>

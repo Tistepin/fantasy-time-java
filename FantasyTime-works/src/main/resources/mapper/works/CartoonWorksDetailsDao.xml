@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xu.works.dao.CartoonWorksDetailsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.xu.works.entity.CartoonWorksDetailsEntity" id="cartoonWorksDetailsMap">
+        <result property="id" column="id"/>
+        <result property="worksId" column="works_id"/>
+        <result property="cartoonChapterId" column="cartoon_chapter_id"/>
+        <result property="cartoonChapterName" column="cartoon_chapter_name"/>
+        <result property="cartoonPages" column="cartoon_pages"/>
+        <result property="createTime" column="create_time"/>
+        <result property="editTime" column="edit_time"/>
+        <result property="deleteStatus" column="delete_status"/>
+        <result property="reviewStatus" column="review_status"/>
+    </resultMap>
+    <update id="review">
+        UPDATE ft_cartoon_works_details set review_status=#{reviewCartoonWorksTo.reviewStatus}
+        WHERE id=#{reviewCartoonWorksTo.id} and works_id=#{reviewCartoonWorksTo.worksId}
+    </update>
+
+
+</mapper>

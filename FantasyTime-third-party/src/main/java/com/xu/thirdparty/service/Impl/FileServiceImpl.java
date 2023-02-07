@@ -7,7 +7,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xu.common.constant.ResultCode;
 import com.xu.common.utils.R;
-import com.xu.thirdparty.fegin.SearchService;
+import com.xu.thirdparty.fegin.WorksService;
 import com.xu.thirdparty.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,13 @@ import java.io.*;
 public class FileServiceImpl implements FileService {
 
     @Autowired
-    SearchService searchService;
+    WorksService WorksService;
 
     /**
-     * 文件上传至阿里云
+     * 图片上传
      */
     @Override
     public String upload(String worksName, String worksChapterId, MultipartFile file) throws IOException {
-
         String Filename = file.getOriginalFilename();
         // 获取输入流
         InputStream inputStream = file.getInputStream();
@@ -64,7 +63,7 @@ public class FileServiceImpl implements FileService {
                 e.printStackTrace();
             }
         }
-        return file1 + "/" + Filename;
+        return file1 + "\\" + Filename;
 //        return "成功";
     }
 
@@ -76,22 +75,38 @@ public class FileServiceImpl implements FileService {
      * @Params [worksId, worksChapterId, response]
      */
     @Override
-    public void GetWorkContent(Integer worksId, Integer worksChapterId, Integer imageId, HttpServletResponse response) {
-        R imageData = searchService.getImageData(worksId, worksChapterId, imageId);
-        if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
-            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
-            String Url = jsonObject.get("worksChapterLocation").toString();
-            if (Url != null) {
-                response.setContentType("image/png"); // 不同文件的MimeType参考后续链接
-                try {
-                    FileCopyUtils.copy(new FileInputStream(Url), response.getOutputStream());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
+    public void GetWorkContent(Integer worksId, Integer worksChapterId, Integer imageId, HttpServletResponse response, Integer imageDefaultStatus) {
+        // 0 不是 1 是
+        String Url=null;
+        if (imageDefaultStatus==1){
+            R imageData = WorksService.getWorksDefaultImage(worksId.longValue());
+            if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
+                JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
+                Url = jsonObject.get("worksDefaultImage").toString();
+            }else{
                 throw new RuntimeException("没有该图片");
             }
+        }else{
+            R imageData = WorksService.getImageData(worksId, worksChapterId, imageId);
+            if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
+                JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
+                Url = jsonObject.get("worksChapterLocation").toString();
+            }else{
 
+                throw new RuntimeException("没有该图片");
+            }
+        }
+
+
+        if (Url != null) {
+            response.setContentType("image/jpg"); // 不同文件的MimeType参考后续链接
+            try {
+                FileCopyUtils.copy(new FileInputStream(Url), response.getOutputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new RuntimeException("没有该图片");
         }
     }
 

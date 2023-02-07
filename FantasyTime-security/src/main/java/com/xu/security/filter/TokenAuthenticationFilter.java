@@ -52,7 +52,7 @@ public class TokenAuthenticationFilter  extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         //  从header里面获取token
-        String token = request.getHeader("token");
+        String token = request.getHeader("FantasyTimetoken");
         if (token!=null){
             // 从token里面获取用户名
             String username = tokenManager.getUserFromToken(token);

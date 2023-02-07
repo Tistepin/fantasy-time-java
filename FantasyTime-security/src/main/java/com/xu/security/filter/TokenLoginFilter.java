@@ -78,7 +78,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
         // 4.返回token
-        ResponseUtil.out(response, R.ok().data("token",token));
+        ResponseUtil.out(response, R.ok().data("FantasyTimetoken",token));
 
     }
 

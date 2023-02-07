@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xu.works.dao.WorksDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.xu.works.entity.WorksEntity" id="worksMap">
+        <result property="worksId" column="works_id"/>
+        <result property="worksName" column="works_name"/>
+        <result property="defaultImage" column="default_image"/>
+        <result property="creator" column="creator"/>
+        <result property="worksCreator" column="works_creator"/>
+        <result property="worksCreateTime" column="works_create_time"/>
+        <result property="worksArea" column="works_area"/>
+        <result property="worksType" column="works_type"/>
+        <result property="worksScore" column="works_score"/>
+        <result property="worksRenew" column="works_renew"/>
+        <result property="worksPopularity" column="works_popularity"/>
+        <result property="worksDescribe" column="works_describe"/>
+        <result property="worksCategory" column="works_category"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="editTime" column="edit_time"/>
+        <result property="deleteStatus" column="delete_status"/>
+        <result property="worksStatus" column="works_status"/>
+        <result property="reviewStatus" column="review_status"/>
+    </resultMap>
+    <update id="review">
+        UPDATE ft_works set review_status=#{reviewWorksTo.reviewStatus}
+        WHERE works_id=#{reviewWorksTo.worksId}
+    </update>
+    <select id="getRecentlyUpdated" resultMap="worksMap">
+        select works_id, works_name, default_image, works_renew, works_type,works_describe
+        from ft_works
+        where works_status = 1
+          and works_type = #{worksType}
+          and delete_status = 1
+          and review_status=1
+        order by edit_time desc
+        limit 100
+    </select>
+    <select id="getClassicEnd" resultType="com.xu.works.entity.WorksEntity">
+        select works_id,works_name,default_image,works_renew,works_type,works_describe from ft_works where works_id in (
+        <foreach collection="popularityIds" item="item" separator=",">
+            #{item}
+        </foreach>
+        ) and delete_status = 1
+        and review_status=1 order by works_popularity desc
+    </select>
+    <select id="getPopularSerial" resultType="com.xu.works.entity.WorksEntity">
+        select works_id, works_name, default_image, works_renew, works_popularity, works_type,works_describe
+        from ft_works
+        where works_area = 1
+          and delete_status = 1
+          and review_status=1
+          and works_type = #{worksType}
+        order by works_popularity desc
+        limit 10
+    </select>
+    <select id="getLatestCreation" resultType="com.xu.works.entity.WorksEntity">
+        SELECT works_id, works_name, default_image, works_renew, works_type,works_describe
+        FROM ft_works
+        where works_status = 1
+          and delete_status = 1
+          and review_status=1
+          and works_type = #{worksType}
+        order by works_create_time desc
+        limit 10
+    </select>
+    <select id="getRecommendedToday" resultType="com.xu.works.entity.WorksEntity">
+        SELECT works_id, works_name, default_image, works_renew,works_type,works_describe
+        FROM ft_works
+        where works_status = 1
+        and delete_status = 1
+        and review_status=1
+        and works_type = #{worksType}
+        and works_category regexp
+        <foreach collection="categoryIds" item="item" open="'[" close="]'">
+            ${item}
+        </foreach>
+        and ft_works.works_id >= FLOOR(RAND() * ((SELECT MAX(U1.works_id) FROM ft_works AS U1) - (SELECT MIN(U2.works_id) FROM ft_works AS
+        U2))
+        + (SELECT MIN(U3.works_id) FROM ft_works AS U3))
+        limit 10
+    </select>
+    <select id="getRecentlyUpdatedTop" resultType="com.xu.works.vo.WorksVo">
+        select works_id, works_name, default_image, works_renew, works_type,works_describe
+        from ft_works
+        where works_status = 1
+          and works_type = #{worksType}
+          and delete_status = 1
+          and review_status=1
+          and edit_time >= #{today}
+        limit 10
+    </select>
+    <select id="getDailyLeaderboardTop" resultMap="worksMap">
+        select *
+        from ft_works w where works_id in (
+        <foreach collection="workList" item="WorksId" separator=",">
+            #{WorksId}
+        </foreach>
+        )
+
+        and review_status=1
+        order by field(works_id,
+        <foreach collection="workList" item="WorksId" separator=",">
+            #{WorksId}
+        </foreach>
+        )
+
+    </select>
+    <select id="getthisWeekLeaderboardTop" resultMap="worksMap">
+        select *
+        from ft_works w
+                 left join (select works_id,
+                                   works_popularity_thisWeek
+                            from ft_popularity
+                            where delete_status = #{worksType}) p on w.works_id = p.works_id
+        where w.works_type = 1
+          and w.delete_status = 1
+          and review_status=1
+        order by works_popularity_thisWeek desc
+        limit 10;
+    </select>
+    <select id="getthreeDaysLeaderboardTop" resultMap="worksMap">
+        select *
+        from ft_works w
+                 left join (select works_id,
+                                   works_popularity_three_days
+                            from ft_popularity
+                            where delete_status = #{worksType}) p on w.works_id = p.works_id
+        where w.works_type = 1
+          and w.delete_status = 1
+          and review_status=1
+        order by works_popularity_three_days desc
+        limit 10;
+    </select>
+    <select id="getthisMonthDaysLeaderboardTop" resultMap="worksMap">
+        select *
+        from ft_works w
+                 left join (select works_id,
+                                   works_popularity_thisMonth
+                            from ft_popularity
+                            where delete_status = #{worksType}) p on w.works_id = p.works_id
+        where w.works_type = 1
+          and w.delete_status = 1
+          and review_status=1
+        order by works_popularity_thisMonth desc
+        limit 10;
+    </select>
+    <select id="selectWorksInfo" resultType="com.xu.works.vo.WorksInfoVo">
+        select works_id,
+               works_name,
+               default_image,
+               creator,
+               works_creator,
+               date_format(works_create_time, '%Y') works_create_time,
+               GET_AREA_NAME(works_area)            works_area,
+               works_type,
+               works_score,
+               works_renew,
+               works_popularity,
+               works_describe,
+               works_category,
+               works_status,
+               edit_time
+        from ft_works
+        where works_id = #{worksId}
+          and delete_status = 1
+          and review_status=1
+    </select>
+    <select id="getRecommendedWorks" resultType="com.xu.works.vo.WorksInfoVo">
+        select works_id,
+        works_name,
+        default_image,
+        creator,
+        works_creator,
+        date_format(works_create_time, '%Y') works_create_time,
+        GET_AREA_NAME(works_area)            works_area,
+        works_type,
+        works_score,
+        works_renew,
+        works_popularity,
+        works_describe,
+        works_category,
+        works_status,
+        edit_time
+        from ft_works
+        where delete_status = 1
+        and review_status=1
+          and works_type = #{worksType}
+          and works_category regexp
+        <foreach collection="worksCategorys" item="item" open="'[" close="]'">
+            ${item}
+        </foreach>
+        limit 10
+    </select>
+    <select id="getWorksInfo" resultType="com.xu.works.vo.WorksVo">
+        select works_id,
+        works_name,
+        default_image,
+        creator,
+        works_creator,
+        date_format(works_create_time, '%Y') works_create_time,
+        GET_AREA_NAME(works_area)            works_area,
+        works_type,
+        works_score,
+        works_renew,
+        works_popularity,
+        works_describe,
+        works_category,
+        works_status,
+        edit_time
+        from ft_works
+        where delete_status = 1
+        and review_status=1
+        and  works_id in
+        <foreach collection="worksIds" item="item" open="(" close=")" separator=",">
+            ${item}
+        </foreach>
+    </select>
+
+
+</mapper>

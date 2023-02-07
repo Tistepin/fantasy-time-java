@@ -1,0 +1,75 @@
+GET fantasytime_works/_mapping
+
+DELETE fantasytime_works
+
+PUT fantasytime_works
+{
+  "mappings": {
+    "properties": {
+      "worksId": {
+        "type": "long"
+      },
+      "worksName": {
+        "type": "text",
+        "analyzer": "ik_smart"
+      },
+      "defaultImage": {
+        "type": "keyword",
+        "index": false,
+        "doc_values": false
+      },
+      "creator": {
+        "type": "keyword",
+        "doc_values": false
+      },
+      "worksCreator": {
+        "type": "keyword",
+        "doc_values": false
+      },
+      "worksCreateTime": {
+        "type": "text"
+      },
+      "worksArea": {
+        "type": "long",
+        "doc_values": false
+      },
+      "worksAreaName": {
+        "type": "keyword"
+      },
+      "worksType": {
+        "type": "long",
+        "doc_values": false
+      },
+      "worksScore": {
+        "type": "float"
+      },
+      "worksRenew": {
+        "type": "integer"
+      },
+      "worksPopularity": {
+        "type": "integer"
+      },
+      "worksDescribe": {
+        "type": "text"
+      },
+      "worksCategory": {
+        "type": "text",
+        "analyzer": "ik_smart"
+      },
+      "worksCategoryName": {
+        "type": "keyword"
+      },
+      "worksStatus": {
+        "type": "long"
+      },
+      "createTime": {
+        "type": "date",
+        "format": "MMM d HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSS||HH:mm:ss||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||strict_date_optional_time||epoch_millis"
+      },
+      "editTime": {
+        "type": "date",
+        "format": "MMM d HH:mm:ss||yyyy-MM-dd HH:mm:ss.SSS||HH:mm:ss||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}

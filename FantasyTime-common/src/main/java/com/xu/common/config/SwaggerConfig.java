@@ -35,6 +35,49 @@ public class SwaggerConfig {
     private static final String splitor = ";";
 
     @Bean
+    Docket docketWorks() {
+        List<Parameter> parameters = new ArrayList<>();
+        parameters.add(new ParameterBuilder()
+                .name("FantasyTimetoken")
+                .description("认证token")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(false)
+                .build());
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(basePackage("com.xu.works.controller"))		//这里采用包扫描的方式来确定要显示的接口
+                // .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))                         //这里采用包含注解的方式来确定要显示的接口
+                .paths(PathSelectors.any())
+                .build()
+                .globalOperationParameters(parameters)
+                .groupName("WorksApi")
+                ;
+    }
+
+    @Bean
+    Docket DockerThirdParty() {
+        List<Parameter> parameters = new ArrayList<>();
+        parameters.add(new ParameterBuilder()
+                .name("FantasyTimetoken")
+                .description("认证token")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(false)
+                .build());
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(basePackage("com.xu.thirdparty.controller"))		//这里采用包扫描的方式来确定要显示的接口
+                // .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))                         //这里采用包含注解的方式来确定要显示的接口
+                .paths(PathSelectors.any())
+                .build()
+                .globalOperationParameters(parameters)
+                .groupName("ThirdPartyApi")
+                ;
+    }
+    @Bean
     Docket docketSearch() {
         List<Parameter> parameters = new ArrayList<>();
         parameters.add(new ParameterBuilder()
@@ -55,29 +98,6 @@ public class SwaggerConfig {
                 .groupName("SearchApi")
                 ;
     }
-
-    @Bean
-    Docket DockerThirdParty() {
-        List<Parameter> parameters = new ArrayList<>();
-        parameters.add(new ParameterBuilder()
-                .name("token")
-                .description("认证token")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build());
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(basePackage("com.xu.thirdparty.controller"))		//这里采用包扫描的方式来确定要显示的接口
-                // .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))                         //这里采用包含注解的方式来确定要显示的接口
-                .paths(PathSelectors.any())
-                .build()
-                .globalOperationParameters(parameters)
-                .groupName("ThirdPartyApi")
-                ;
-    }
-
 
     /**
      * 获取Swagger2文档网站的信息，例如网站的title，网站的描述，联系人的信息，使用的协议等等。

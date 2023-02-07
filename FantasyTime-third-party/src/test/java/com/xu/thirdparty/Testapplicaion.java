@@ -5,6 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @Description:
@@ -16,8 +18,17 @@ import java.io.File;
 @ContextConfiguration
 public class Testapplicaion {
     @Test
-    public void Test(){
+    public void Test() {
         File file1 = new File("C:/Users/F3863479/Desktop/Test/a");
         file1.mkdir();
+    }
+
+    @Test
+    public void Test2() {
+        Queue<String> queue = new LinkedList<String>();
+        queue.offer("string"); // add
+        System.out.println(queue.poll());
+        System.out.println(queue.remove());
+        System.out.println(queue.size());
     }
 }

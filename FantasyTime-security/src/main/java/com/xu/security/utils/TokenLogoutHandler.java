@@ -30,7 +30,7 @@ public class TokenLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         // 1.从请求头里获取token
-        String token = request.getHeader("token");
+        String token = request.getHeader("FantasyTimetoken");
         // 2.token不为空 移除 token 从redis删除token
         if (token != null) {
             //移除token

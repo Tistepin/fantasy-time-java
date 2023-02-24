@@ -5,6 +5,7 @@ import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.PopularityEntity;
 import com.xu.works.to.worksPopularityTodayTo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,8 @@ public interface PopularityService extends IService<PopularityEntity> {
 
     List<String> getPopularityTop(Integer worksType);
 
-    void saveWorksPopularity(Integer worksType, Integer worksId, Integer userId);
+    void saveWorksPopularity(Integer worksType, Integer worksId,
+                             HttpServletRequest request);
 
     Integer updateByWorksId(ArrayList<worksPopularityTodayTo> worksPopularityTodayTos);
 }

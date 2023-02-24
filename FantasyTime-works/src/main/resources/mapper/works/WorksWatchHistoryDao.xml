@@ -11,6 +11,8 @@
         <result property="worksName" column="works_name"/>
         <result property="defaultImage" column="default_image"/>
         <result property="worksHistoryViewingChapter" column="works_history_viewing_chapter"/>
+        <result property="worksHistoryViewingChapterId" column="works_history_viewing_chapter_id"/>
+        <result property="worksHistoryViewingChapterImage" column="works_history_viewing_chapter_image"/>
         <result property="worksType" column="works_type"/>
         <result property="worksStatus" column="works_status"/>
         <result property="deleteStatus" column="delete_status"/>

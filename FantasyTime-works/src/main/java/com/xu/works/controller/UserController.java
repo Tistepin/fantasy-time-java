@@ -58,13 +58,13 @@ public class UserController {
     }
 
     // 3.根据请求获取用户实体类
-    @ApiOperation(value = "获取用户实体类", notes = "获取用户实体类")
-    @ApiImplicitParam(name = "userEntity", value = "更新用户 ", paramType = "body",
-            required = true, dataType = "UserEntity")
+    @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
+    @ApiImplicitParam(name = "userUpdateTo", value = "更新用户 ", paramType = "body",
+            required = true, dataType = "userUpdateTo")
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
-    @GetMapping("/updateUser")
+    @PostMapping("/updateUser")
     public R updateUser(@RequestBody userUpdateTo userUpdateTo) {
         userService.updateUser(userUpdateTo);
         return R.ok();

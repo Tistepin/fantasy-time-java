@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.xu.works.service.WorksUploadService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -38,7 +39,6 @@ public class WorksUploadController {
     @ApiOperation(value = "查看自己上传的作品", notes = "查看自己上传的作品")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "UserID", value = "用户ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
                     @ApiImplicitParam(name = "worksType", value = "作品类型", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
                     @ApiImplicitParam(name = "page", value = "显示页数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
                     @ApiImplicitParam(name = "limit", value = "每页条数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
@@ -48,11 +48,11 @@ public class WorksUploadController {
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getUserUploadWorks")
-    public R getUserUploadWorks(@RequestParam Integer UserID,
+    public R getUserUploadWorks(
                                 @RequestParam Integer worksType,
                                 @RequestParam Integer page,
-                                @RequestParam Integer limit) {
-        List<WorksVo> worksVos = worksUploadService.getUserUploadWorks(UserID, worksType,page,limit);
+                                @RequestParam Integer limit, HttpServletRequest request) {
+        List<WorksVo> worksVos = worksUploadService.getUserUploadWorks( worksType,page,limit,  request);
         return R.ok().data("data", worksVos);
     }
 

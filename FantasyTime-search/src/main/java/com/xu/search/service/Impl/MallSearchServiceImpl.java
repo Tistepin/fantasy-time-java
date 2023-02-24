@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.xu.common.TO.es.WorksEsModel;
 import com.xu.search.constant.EsConstant;
 import com.xu.search.service.MallSearchService;
+import com.xu.search.utils.FileTOZip;
 import com.xu.search.vo.SearchParam;
 import com.xu.search.vo.SearchResult;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class MallSearchServiceImpl implements MallSearchService {
-
 
     @Autowired
     private ElasticsearchClient client;
@@ -84,11 +84,13 @@ public class MallSearchServiceImpl implements MallSearchService {
         return searchResult;
     }
 
+
+
     private SearchResult buildSearchResult(SearchResponse<HashMap> search, SearchParam searchParam) {
         SearchResult searchResult = new SearchResult();
         HitsMetadata<HashMap> hits = search.hits();
         /**
-         * 1查询到的所有商品信息
+         * 1查询到的所有作品信息
          */
         if (!hits.hits().isEmpty()) {
             List<WorksEsModel> skuEsModels = new ArrayList<>();
@@ -138,7 +140,7 @@ public class MallSearchServiceImpl implements MallSearchService {
          * 1.2 模糊匹配  查询含有这个题材的作品 题材可能含有多个
          */
         String worksCategory = searchParam.getWorksCategory();
-        if (!StringUtils.isEmpty(worksCategory)) {
+        if (!StringUtils.isEmpty(worksCategory)&& !worksCategory.equals("1")) {
             String[] split = worksCategory.split(",");
             List<Query> wildcardQuerys=new ArrayList<>();
             for (String s : split) {
@@ -166,7 +168,7 @@ public class MallSearchServiceImpl implements MallSearchService {
          * 1.4 精确匹配地区
          */
         Integer worksArea = searchParam.getWorksArea();
-        if (!StringUtils.isEmpty(worksArea)) {
+        if (!StringUtils.isEmpty(worksArea)&&worksArea!=1) {
             BoolQueryBuilder.must(
                     m -> m.match(match -> match.field("worksArea").query(worksArea))
             );
@@ -175,7 +177,7 @@ public class MallSearchServiceImpl implements MallSearchService {
          * 1.5 精确匹配是否已完结
          */
         Integer worksStatus = searchParam.getWorksStatus();
-        if (!StringUtils.isEmpty(worksStatus)) {
+        if (!StringUtils.isEmpty(worksStatus)&&worksStatus!=0) {
             BoolQueryBuilder.must(
                     m -> m.match(match -> match.field("worksStatus").query(worksStatus))
             );

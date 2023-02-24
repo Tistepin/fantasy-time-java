@@ -73,3 +73,10 @@ PUT fantasytime_works
     }
   }
 }
+// 修Es指定数据的指定字段
+POST fantasytime_works/_update/11
+{
+  "doc":{
+    "worksCategory":"2,8,9,6,"
+  }
+}

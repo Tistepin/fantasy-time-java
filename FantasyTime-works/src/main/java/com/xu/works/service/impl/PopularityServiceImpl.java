@@ -8,13 +8,16 @@ import com.xu.common.utils.Query;
 import com.xu.works.constant.WorksEnum;
 import com.xu.works.dao.PopularityDao;
 import com.xu.works.entity.PopularityEntity;
+import com.xu.works.entity.UserEntity;
 import com.xu.works.service.PopularityService;
+import com.xu.works.service.UserService;
 import com.xu.works.to.worksPopularityTodayTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,8 @@ public class PopularityServiceImpl extends ServiceImpl<PopularityDao, Popularity
     StringRedisTemplate stringRedisTemplate;
     @Autowired
     ThreadPoolExecutor executor;
+    @Autowired
+    UserService userService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -59,7 +64,10 @@ public class PopularityServiceImpl extends ServiceImpl<PopularityDao, Popularity
      * @Params [worksId, userId]
      */
     @Override
-    public void saveWorksPopularity(Integer worksType, Integer worksId, Integer userId) {
+    public void saveWorksPopularity(Integer worksType, Integer worksId,
+                                    HttpServletRequest request) {
+        UserEntity userEntity = userService.getUserEntity(request);
+        Long userId = userEntity.getId();
         // 判断是漫画还是小说
         if (worksType.equals(WorksEnum.Works_mh_Enum.works_mh.getCode())) {
             BoundSetOperations<String, String> mhSetBound = stringRedisTemplate.boundSetOps(WorksEnum.Works_mh_Enum.works_popularity_today_user.getMsg() + "_"+worksId);

@@ -17,6 +17,7 @@ import com.xu.works.feign.SearchFeignService;
 import com.xu.works.service.*;
 import com.xu.works.to.CartoonWorksDetailsEntityTo;
 import com.xu.works.to.ReviewWorksTo;
+import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.to.WorksTo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
@@ -65,6 +66,9 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
     // 漫画章节信息表
     @Autowired
     CartoonWorksDetailsService cartoonWorksDetailsService;
+    // 书架表
+    @Autowired
+    WorksBookshelfService worksBookshelfService;
     // endregion
     // region feignService
     @Autowired
@@ -184,7 +188,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
             // 设置评分
             worksEntity.setWorksScore(0F);
             // 作品更新至多少 刚上传作品肯定是0 因为要审核
-            worksEntity.setWorksRenew("0");
+            worksEntity.setWorksRenew(0L);
             // 设置人气
             worksEntity.setWorksPopularity(0L);
             worksEntity.setStatus(1);
@@ -279,14 +283,21 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
     }
 
     @Override
-    public PageUtils queryPage(Integer page, Integer limit) {
+    public PageUtils queryPage(Integer page, Integer limit, Integer reviewStatus, Integer delete_status) {
         Map<String, Object> params = new HashMap<>();
         params.put("page", page.toString());
         params.put("limit", limit.toString());
+
+        QueryWrapper<WorksEntity> wrapper = new QueryWrapper<WorksEntity>();
+        if (reviewStatus != null) {
+            wrapper.eq("review_status", reviewStatus);
+        }
+        if (delete_status != null) {
+            wrapper.eq("delete_status", delete_status);
+        }
+
         IPage<WorksEntity> pages = this.page(
-                new Query<WorksEntity>().getPage(params),
-                new QueryWrapper<WorksEntity>().eq("review_status", 0)
-                        .eq("delete_status", 1)
+                new Query<WorksEntity>().getPage(params),wrapper
         );
         List<AreaEntity> getarea = areaService.getarea();
         List<WorksEntity> collect = pages.getRecords().stream().map((item) -> {
@@ -336,7 +347,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 // 插图 直接更新漫画章节信息的表格
                 CartoonWorksDetailsEntityTo cartoonWorksDetailsEntity = new CartoonWorksDetailsEntityTo();
                 cartoonWorksDetailsEntity.setWorksId(worksEntity.getWorksId());
-                cartoonWorksDetailsEntity.setCartoonChapterId("1");
+                cartoonWorksDetailsEntity.setCartoonChapterId(1L);
                 cartoonWorksDetailsEntity.setCartoonChapterName(worksEntity.getWorksName());
                 ArrayList<String> strings = new ArrayList<>();
                 strings.add(worksEntity.getDefaultImage());
@@ -346,10 +357,10 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         }, executor);
         CompletableFuture<Void> voidCompletableFuture3 = CompletableFuture.runAsync(() -> {
             worksDefaultImageService.update(
-                    new UpdateWrapper<WorksDefaultImageEntity>().set("review_status",1).eq("works_id",worksId)
+                    new UpdateWrapper<WorksDefaultImageEntity>().set("review_status", 1).eq("works_id", worksId)
             );
         }, executor);
-        CompletableFuture.allOf(voidCompletableFuture,voidCompletableFuture1,voidCompletableFuture2,voidCompletableFuture3).get();
+        CompletableFuture.allOf(voidCompletableFuture, voidCompletableFuture1, voidCompletableFuture2, voidCompletableFuture3).get();
         // 审核完成 把作品上传到es
         UpEs(worksId);
     }
@@ -587,4 +598,21 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         return collect;
     }
 
+    @Override
+    @Transactional
+    public void WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo) {
+        // 获取worksId
+        Long worksId = saveBookToShelfTo.getWorksId();
+        WorksEntity worksEntity = this.baseMapper.selectById(worksId);
+        long WorksRenew = worksEntity.getWorksRenew() + 1;
+        worksEntity.setWorksRenew(WorksRenew);
+        worksEntity.setEditTime(new Date(System.currentTimeMillis()));
+        this.baseMapper.updateById(worksEntity);
+        worksBookshelfService.update(
+                new UpdateWrapper<WorksBookshelfEntity>()
+                .eq("works_id",worksId)
+                .set("works_renew",WorksRenew)
+                .set("works_update_time",new Date(System.currentTimeMillis()))
+        );
+    }
 }

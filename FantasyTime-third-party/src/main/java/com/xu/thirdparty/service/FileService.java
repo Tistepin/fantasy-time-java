@@ -25,4 +25,6 @@ public interface FileService   {
     void GetWorkContent(Integer worksId, Integer worksChapterId, Integer imageId, HttpServletResponse response, Integer imageDefaultStatus);
 
     String upload(String worksName, String worksChapterId, MultipartFile file) throws IOException;
+
+    void removeFile(String url);
 }

@@ -1,6 +1,7 @@
 package com.xu.works.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xu.common.utils.MD5;
@@ -9,15 +10,19 @@ import com.xu.common.utils.Query;
 import com.xu.security.utils.TokenManager;
 import com.xu.works.constant.UserEnum;
 import com.xu.works.dao.UserDao;
+import com.xu.works.entity.RoleUserEntity;
 import com.xu.works.entity.UserEntity;
+import com.xu.works.service.RoleUserService;
 import com.xu.works.service.UserService;
 import com.xu.works.to.UserTo;
 import com.xu.works.to.userUpdateTo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -27,6 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Autowired
     TokenManager tokenManager;
     @Autowired
+    RoleUserService roleUserService;
 
 
     @Override
@@ -61,6 +67,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         // 默认头像
         userEntity.setHeader("");
         baseMapper.insert(userEntity);
+        RoleUserEntity roleUserEntity = new RoleUserEntity();
+        roleUserEntity.setUid(userEntity.getId());
+        roleUserEntity.setRid(1L);
+        roleUserService.save(roleUserEntity);
     }
 
     /**
@@ -88,7 +98,46 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public void updateUser(userUpdateTo userUpdateTo) {
-        this.baseMapper.updateUser(userUpdateTo);
+        // 1.获取手机号 查询User数据
+        String phone = userUpdateTo.getPhone();
+        UserEntity userEntity = this.baseMapper.selectOne(new QueryWrapper<UserEntity>().eq("phone", phone));
+        String username = userUpdateTo.getUsername();
+        if (!StringUtils.isEmpty(username)){
+            userEntity.setUsername(username);
+        }
+        String city = userUpdateTo.getCity();
+        if (!StringUtils.isEmpty(username)){
+            userEntity.setCity(city);
+        }
+        Date birth = userUpdateTo.getBirth();
+        if (!StringUtils.isEmpty(birth)){
+            userEntity.setBirth(birth);
+        }
+        String email = userUpdateTo.getEmail();
+        if (!StringUtils.isEmpty(email)){
+            userEntity.setEmail(email);
+        }
+        String header = userUpdateTo.getHeader();
+        if (!StringUtils.isEmpty(header)){
+            userEntity.setHeader(header);
+        }
+        String job = userUpdateTo.getJob();
+        if (!StringUtils.isEmpty(job)){
+            userEntity.setJob(job);
+        }
+        String nickname = userUpdateTo.getNickname();
+        if (!StringUtils.isEmpty(nickname)){
+            userEntity.setNickname(nickname);
+        }
+        String sign = userUpdateTo.getSign();
+        if (!StringUtils.isEmpty(sign)){
+            userEntity.setSign(sign);
+        }
+        Integer gender = userUpdateTo.getGender();
+        if (!(gender == 0)){
+            userEntity.setGender(gender);
+        }
+//        this.baseMapper.updateById(userEntity);
     }
 
 }

@@ -21,12 +21,14 @@ public interface CartoonWorksDetailsService extends IService<CartoonWorksDetails
 
     PageUtils queryPage(Map<String, Object> params);
 
-    List<CartoonWorksDetailsEntity> getWorksChapterList(Integer worksId);
+    List<CartoonWorksDetailsEntity> getWorksChapterList(Integer worksId, Integer order);
 
     String saveUploadChapterData(CartoonWorksDetailsEntityTo cartoonWorksDetailsEntityTo, HttpServletRequest request);
 
-    List<ReviewCartoonWorksTo> getReviewList();
+    List<ReviewCartoonWorksTo> getReviewList(Integer reviewStatus, Integer deleteStatus);
 
     void review(ReviewCartoonWorksTo reviewCartoonWorksTo);
+
+    void getChapterWorksZip(Integer worksChapterId, String zipFilePath);
 }
 

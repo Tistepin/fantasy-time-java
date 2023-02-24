@@ -21,6 +21,14 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.zipkin.java</groupId>
+                    <artifactId>zipkin-autoconfigure-ui</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-zipkin</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

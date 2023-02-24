@@ -63,7 +63,7 @@ public class SearchParam {
      */
     private Integer pageNum = 1;
     /**
-     * 页码
+     * 显示条数
      */
     private Integer pageSize = 2;
 }

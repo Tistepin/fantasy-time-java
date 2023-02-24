@@ -1,10 +1,19 @@
 package com.xu.works.service.impl;
 
+import com.xu.works.entity.CartoonWorksDetailsEntity;
+import com.xu.works.entity.UserEntity;
+import com.xu.works.entity.WorksEntity;
+import com.xu.works.service.CartoonWorksDetailsService;
+import com.xu.works.service.UserService;
 import com.xu.works.service.WorksService;
+import com.xu.works.to.WorksWatchHistoryTo;
+import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +29,18 @@ import com.xu.works.dao.WorksWatchHistoryDao;
 import com.xu.works.entity.WorksWatchHistoryEntity;
 import com.xu.works.service.WorksWatchHistoryService;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @Service("worksWatchHistoryService")
 public class WorksWatchHistoryServiceImpl extends ServiceImpl<WorksWatchHistoryDao, WorksWatchHistoryEntity> implements WorksWatchHistoryService {
 
     @Autowired
     WorksService worksService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    CartoonWorksDetailsService cartoonWorksDetailsService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<WorksWatchHistoryEntity> page = this.page(
@@ -75,6 +90,39 @@ public class WorksWatchHistoryServiceImpl extends ServiceImpl<WorksWatchHistoryD
              worksVos= worksService.getWorksInfo(WorksIds);
         }
         return worksVos;
+    }
+
+    @Override
+    public void Record(WorksWatchHistoryTo worksWatchHistoryTo, HttpServletRequest request) {
+        WorksWatchHistoryEntity worksWatchHistoryEntity1 = this.baseMapper.selectOne(new QueryWrapper<WorksWatchHistoryEntity>().eq("works_id", worksWatchHistoryTo.getWorksId()));
+        // 获取章节信息
+        Long cartoonChapterId = worksWatchHistoryTo.getCartoonChapterId();
+        CartoonWorksDetailsEntity cartoonWorksDetailsEntity = cartoonWorksDetailsService.getById(cartoonChapterId);
+        if (worksWatchHistoryEntity1!=null){
+            worksWatchHistoryEntity1.setWorksHistoryViewingChapter(Long.valueOf(cartoonWorksDetailsEntity.getCartoonChapterId()));
+            worksWatchHistoryEntity1.setWorksHistoryViewingChapterId(cartoonChapterId);
+            worksWatchHistoryEntity1.setWorksHistoryViewingChapterImage(worksWatchHistoryTo.getWorksHistoryViewingChapterImage());
+            long l = System.currentTimeMillis();
+            worksWatchHistoryEntity1.setEditTime(new Date(l));
+            this.baseMapper.updateById(worksWatchHistoryEntity1);
+        }else{
+            // 获取用户ID
+            UserEntity userEntity = userService.getUserEntity(request);
+            Long UserId = userEntity.getId();
+            // 获取作品实体类
+            Long worksId = worksWatchHistoryTo.getWorksId();
+            WorksInfoVo worksInfo = worksService.getWorksInfo(worksId.intValue());
+            WorksWatchHistoryEntity worksWatchHistoryEntity=new WorksWatchHistoryEntity();
+            worksWatchHistoryEntity.setUserId(UserId);
+            BeanUtils.copyProperties(worksInfo,worksWatchHistoryEntity);
+
+            worksWatchHistoryEntity.setWorksHistoryViewingChapter(Long.valueOf(cartoonWorksDetailsEntity.getCartoonChapterId()));
+            worksWatchHistoryEntity.setWorksHistoryViewingChapterId(cartoonChapterId);
+            worksWatchHistoryEntity.setWorksHistoryViewingChapterImage(worksWatchHistoryTo.getWorksHistoryViewingChapterImage());
+            worksWatchHistoryEntity.setEditTime(null);
+            this.baseMapper.insert(worksWatchHistoryEntity);
+        }
+
     }
 
 

@@ -44,7 +44,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         this.stringRedisTemplate = stringRedisTemplate;
         // 是否仅post访问
         this.setPostOnly(false);
-        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/acl/login","POST"));
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/FT/acl/login","POST"));
     }
     // 1.获取表单提交过来的用户名和密码
     @Override
@@ -75,7 +75,6 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         if (!aBoolean){
             stringRedisTemplate.opsForList().leftPushAll(username,securityUser.getPermissionValueList());
         }
-
 
         // 4.返回token
         ResponseUtil.out(response, R.ok().data("FantasyTimetoken",token));

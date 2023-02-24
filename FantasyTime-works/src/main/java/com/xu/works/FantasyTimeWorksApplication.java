@@ -1,6 +1,7 @@
 package com.xu.works;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author: F3863479
  * @createTime: 2023-01-2023/1/2-下午 02:48
  */
+@EnableRabbit
 @SpringBootApplication
 @EnableDiscoveryClient // 服务注册与发现
 @ComponentScan("com.xu") // 扫描配置文件 这里主要是权限模块的配置文件注入

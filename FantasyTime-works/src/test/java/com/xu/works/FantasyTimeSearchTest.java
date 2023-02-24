@@ -1,16 +1,21 @@
 package com.xu.works;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xu.common.utils.MD5;
 import com.xu.works.constant.WorksEnum;
 import com.xu.works.dao.WorksDao;
 import com.xu.works.service.PopularityService;
+import com.xu.works.vo.WorksVo;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.*;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -25,7 +30,7 @@ public class FantasyTimeSearchTest {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
     @Autowired
-    RedisTemplate redisTemplate;
+    RedisTemplate<String,String> redisTemplate;
     @Autowired
     PopularityService popularityService;
     @Test
@@ -62,19 +67,10 @@ public class FantasyTimeSearchTest {
 
     @Test
     void test3(){
-        stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_three_days_mh.getMsg());
-        stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_thisWeek_mh.getMsg());
-        stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_thisMonth_mh.getMsg());
-//        PopularityEntity popularityEntity = new PopularityEntity();
-//        boolean b = popularityService.updateBatchById(popularityEntities);
-
+        String a="123";
+        System.out.println(a.hashCode());
     }
 
 
-    @Test
-    void test4(){
 
-        String encrypt = MD5.encrypt("123");
-        System.out.println(encrypt);
-    }
 }

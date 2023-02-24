@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @Description:
@@ -18,40 +17,41 @@ import java.io.InputStream;
  * @createTime: 2023-01-2023/1/10-下午 04:20
  */
 @RestController
+@RequestMapping("/oss")
 public class OssController {
     @Autowired
     private FileService fileService;
 
 
-    @PostMapping("/oss/policy2")
+    @PostMapping("/policy2")
     public R policy2(
             //@ApiParam(value = "文件", required = true)
-            @RequestParam(value = "WorksName",required = false) String WorksName,
-            @RequestParam(value = "worksChapterId",required = false) String worksChapterId,
-            @RequestParam(value = "file",required = false) MultipartFile file
+            @RequestParam(value = "WorksName", required = false) String WorksName,
+            @RequestParam(value = "worksChapterId", required = false) String worksChapterId,
+            @RequestParam(value = "file", required = false) MultipartFile file
     ) throws IOException {
-        String url =fileService.upload(WorksName,worksChapterId,file);
-        if (url !=null && url.length()!=0) {
+        String url = fileService.upload(WorksName, worksChapterId, file);
+        if (url != null && url.length() != 0) {
 
-            return R.ok().data("messages","上传成功").data("url", url);
+            return R.ok().data("messages", "上传成功").data("url", url);
         }
         return R.error();
     }
+
     /**
+     * @return com.xu.common.utils.R
      * @Description 获取这个作品的这一章的内容信息
      * @Author F3863479
      * @Date 2023/1/11 上午 10:38
      * @Params []
-     * @return com.xu.common.utils.R
-     *
      */
-    @ApiOperation(value = "获取这个作品的这一章的内容信息类别画画作品", notes = "获取这个作品的这一章的内容信息类别画画作品")
+    @ApiOperation(value = "获取这个作品的这一章的指定图片", notes = "获取这个作品的这一章的指定图片")
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "WorksId", value = "作品id", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
                     @ApiImplicitParam(name = "WorksChapterId", value = "作品章节Id", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = false),
                     // 0 不是 1 是
-                    @ApiImplicitParam(name = "ImageDefaultStatus", value = "是否是作品封面", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "ImageDefaultStatus", value = "是否是作品封面 0 不是 1 是", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
                     @ApiImplicitParam(name = "ImageId", value = "图片ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = false)
 
             }
@@ -65,9 +65,24 @@ public class OssController {
             @RequestParam(required = false) Integer WorksChapterId,
             @RequestParam(required = false) Integer ImageId,
             @RequestParam Integer ImageDefaultStatus,
-             HttpServletResponse response
+            HttpServletResponse response
     ) throws IOException {
-        fileService.GetWorkContent(WorksId,WorksChapterId,ImageId,response,ImageDefaultStatus);
+        fileService.GetWorkContent(WorksId, WorksChapterId, ImageId, response, ImageDefaultStatus);
 
+    }
+
+    @ApiOperation("删除OSS文件")
+    @ApiImplicitParam(name = "url", value = "图片存储路径", paramType = "query", dataType = "String",
+            defaultValue = "", allowEmptyValue = true)
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+
+    @DeleteMapping("/remove")
+    public R remove(
+//            @ApiParam(value = "要删除的文件路径", required = true)
+            @RequestParam("url") String url) {
+        fileService.removeFile(url);
+        return R.ok();
     }
 }

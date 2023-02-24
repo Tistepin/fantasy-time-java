@@ -37,16 +37,17 @@ public class CartoonWorksDetailsController {
     @ApiOperation(value = "作品章节目录查询", notes = "作品章节目录查询")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "worksType", value = "作品类型", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-                    @ApiImplicitParam(name = "worksId", value = "作品ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+                    @ApiImplicitParam(name = "worksId", value = "作品ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "order", value = "升序0 降序1", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
             }
     )
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getWorksChapterList")
-    public R getWorksChapterList(@RequestParam Integer worksId) {
-        List<CartoonWorksDetailsEntity> worksDetailsEntities=cartoonWorksDetailsService.getWorksChapterList(worksId);
+    public R getWorksChapterList(@RequestParam Integer worksId,
+                                 @RequestParam Integer order) {
+        List<CartoonWorksDetailsEntity> worksDetailsEntities=cartoonWorksDetailsService.getWorksChapterList(worksId,order);
         return R.ok().data("data",worksDetailsEntities);
     }
 
@@ -79,16 +80,18 @@ public class CartoonWorksDetailsController {
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "page", value = "页", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-                    @ApiImplicitParam(name = "limit", value = "页面个数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+                    @ApiImplicitParam(name = "limit", value = "页面个数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "reviewStatus", value = "审核状态 0-审核中 1-审核成功 2-审核失败", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "deleteStatus", value = "逻辑删除状态 0-已删除 1-未删除", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
             }
     )
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getReviewList")
-    public R getReviewList(Integer page,Integer limit){
+    public R getReviewList(Integer page,Integer limit,Integer reviewStatus,Integer deleteStatus){
         Page pages = (Page) PageHelper.startPage(page, limit);  //pageNum为页码，pageSize为页面大小
-        List<ReviewCartoonWorksTo> cartoonWorksTos = cartoonWorksDetailsService.getReviewList();
+        List<ReviewCartoonWorksTo> cartoonWorksTos = cartoonWorksDetailsService.getReviewList(reviewStatus,deleteStatus);
         PageInfo<ReviewCartoonWorksTo> pageInfo = new PageInfo<ReviewCartoonWorksTo>(cartoonWorksTos);
         return R.ok().data("page", pageInfo);
     }
@@ -112,4 +115,21 @@ public class CartoonWorksDetailsController {
         cartoonWorksDetailsService.review(reviewCartoonWorksTo);
         return R.ok();
     }
+
+
+    // 获取审核章节文件为压缩文件
+    @ApiOperation(value = "获取审核章节文件为压缩文件", notes = "获取审核章节文件为压缩文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "worksChapterId", value = "获取审核章节文件为压缩文件", paramType = "query", dataType = "Integer", defaultValue = "1"),
+            @ApiImplicitParam(name = "zipFilePath", value = "存储路径", paramType = "query", dataType = "String", defaultValue = "1"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("getChapterWorksZip")
+    public R getChapterWorksZip(String zipFilePath,Integer worksChapterId) {
+        cartoonWorksDetailsService.getChapterWorksZip(worksChapterId,zipFilePath);
+        return R.ok();
+    }
+
 }

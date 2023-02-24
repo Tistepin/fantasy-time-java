@@ -5,6 +5,7 @@ import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.WorksUploadEntity;
 import com.xu.works.vo.WorksVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,6 @@ public interface WorksUploadService extends IService<WorksUploadEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    List<WorksVo> getUserUploadWorks(Integer userID, Integer worksType, Integer page, Integer limit);
+    List<WorksVo> getUserUploadWorks( Integer worksType, Integer page, Integer limit, HttpServletRequest request);
 }
 

@@ -23,7 +23,7 @@ public class CartoonWorksDetailsEntityTo {
      * 漫画章节ID 第几话
      */
     @NotEmpty(message = "章节ID表示第几话")
-    private String cartoonChapterId;
+    private Long cartoonChapterId;
     /**
      * 漫画章节名字
      */

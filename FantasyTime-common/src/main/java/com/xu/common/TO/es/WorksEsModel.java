@@ -57,7 +57,7 @@ public class WorksEsModel {
     /**
      * 作品更新至多少
      */
-    private String worksRenew;
+    private Long worksRenew;
     /**
      * 作品人气 用户阅读10章以上为1
      */

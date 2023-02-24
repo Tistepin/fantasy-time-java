@@ -26,7 +26,7 @@ public class RoleUserEntity implements Serializable {
 	/**
 	 * 用户ID
 	 */
-	@TableId(type = IdType.AUTO)
+	@TableId(type = IdType.INPUT)
 	private Long uid;
 	/**
 	 * 角色ID

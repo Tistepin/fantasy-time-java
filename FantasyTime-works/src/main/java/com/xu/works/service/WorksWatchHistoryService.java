@@ -3,8 +3,10 @@ package com.xu.works.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.WorksWatchHistoryEntity;
+import com.xu.works.to.WorksWatchHistoryTo;
 import com.xu.works.vo.WorksVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -23,5 +25,7 @@ public interface WorksWatchHistoryService extends IService<WorksWatchHistoryEnti
 
 
     List<WorksVo> getWorksRecentlyViewed(Integer userID, Integer worksType, Integer page, Integer limit);
+
+    void Record(WorksWatchHistoryTo worksWatchHistoryTo, HttpServletRequest request);
 }
 

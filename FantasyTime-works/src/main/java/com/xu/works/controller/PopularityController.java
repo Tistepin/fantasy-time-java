@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * 作品人气
@@ -34,8 +36,7 @@ public class PopularityController {
     @ApiOperation(value = "今日添加作品人气", notes = "今日添加作品人气")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "WorksType", value = "页面类型", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-            @ApiImplicitParam(name = "WorksId", value = "作品ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-            @ApiImplicitParam(name = "UserId", value = "用户ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+            @ApiImplicitParam(name = "WorksId", value = "作品ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
     })
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
@@ -43,8 +44,8 @@ public class PopularityController {
     @PostMapping("/saveWorksPopularity")
     public R saveWorksPopularity(@RequestParam Integer WorksType,
                                  @RequestParam Integer WorksId,
-                                 @RequestParam Integer UserId) {
-        popularityService.saveWorksPopularity(WorksType,WorksId, UserId);
+                                 HttpServletRequest request) {
+        popularityService.saveWorksPopularity(WorksType,WorksId,request);
         return R.ok();
     }
 

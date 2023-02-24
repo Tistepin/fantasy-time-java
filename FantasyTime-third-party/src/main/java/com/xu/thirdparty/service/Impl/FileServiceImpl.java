@@ -9,7 +9,11 @@ import com.xu.common.constant.ResultCode;
 import com.xu.common.utils.R;
 import com.xu.thirdparty.fegin.WorksService;
 import com.xu.thirdparty.service.FileService;
+import lombok.var;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +32,8 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     WorksService WorksService;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     /**
      * 图片上传
@@ -41,30 +47,40 @@ public class FileServiceImpl implements FileService {
         // 创建目录
         File file1 = new File("C:/Users/F3863479/Desktop/Test/" + worksName + "/" +worksChapterId);
         // 创建多个目录拥有上下级关系
-        file1.mkdirs();
-        // 创建输出流
-        FileOutputStream fileOutputStream = new FileOutputStream(file1 + "/" + Filename);
-        //3.读数据
-        byte[] buffer = new byte[5];
-        //记录每次读取的字节个数
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            fileOutputStream.write(buffer, 0, len);
-        }
-        if (inputStream != null) {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        boolean mkdirs = file1.mkdirs();
+        if (mkdirs){
+            // 创建输出流
+            FileOutputStream fileOutputStream = new FileOutputStream(file1 + "/" + Filename);
+            //3.读数据
+            byte[] buffer = new byte[5];
+            //记录每次读取的字节个数
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                fileOutputStream.write(buffer, 0, len);
             }
-            try {
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            return file1 + "\\" + Filename;
+        }else{
+            return null;
         }
-        return file1 + "\\" + Filename;
-//        return "成功";
+
+    }
+
+    @Override
+    public void removeFile(String url) {
+        File file1 = new File(url);
+        boolean delete = file1.delete();
     }
 
     /**
@@ -75,6 +91,7 @@ public class FileServiceImpl implements FileService {
      * @Params [worksId, worksChapterId, response]
      */
     @Override
+    @Async
     public void GetWorkContent(Integer worksId, Integer worksChapterId, Integer imageId, HttpServletResponse response, Integer imageDefaultStatus) {
         // 0 不是 1 是
         String Url=null;
@@ -96,8 +113,6 @@ public class FileServiceImpl implements FileService {
                 throw new RuntimeException("没有该图片");
             }
         }
-
-
         if (Url != null) {
             response.setContentType("image/jpg"); // 不同文件的MimeType参考后续链接
             try {

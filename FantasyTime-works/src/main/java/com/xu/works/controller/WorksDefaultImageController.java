@@ -3,6 +3,7 @@ package com.xu.works.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ import com.xu.common.utils.R;
 
 
 /**
- * 作品封面图片服务请求路径存储
+ *
  *
  * @author xuguoji
  * @email 2532878663@qq.com
@@ -22,6 +23,7 @@ import com.xu.common.utils.R;
  */
 @RestController
 @RequestMapping("works/worksdefaultimage")
+@Api(tags = "作品封面图片服务请求路径存储")
 public class WorksDefaultImageController {
     @Autowired
     private WorksDefaultImageService worksDefaultImageService;
@@ -40,10 +42,9 @@ public class WorksDefaultImageController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PutMapping("/save")
     public R save(@RequestBody WorksDefaultImageEntity worksDefaultImage){
 		worksDefaultImageService.save(worksDefaultImage);
-
         return R.ok();
     }
 

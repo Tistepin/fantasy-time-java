@@ -16,7 +16,7 @@
         <result property="reviewStatus" column="review_status"/>
     </resultMap>
     <update id="review">
-        UPDATE ft_cartoon_works_details set review_status=#{reviewCartoonWorksTo.reviewStatus}
+        UPDATE ft_cartoon_works_details set review_status=#{reviewCartoonWorksTo.reviewStatus},edit_time=now()
         WHERE id=#{reviewCartoonWorksTo.id} and works_id=#{reviewCartoonWorksTo.worksId}
     </update>
 

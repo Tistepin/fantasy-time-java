@@ -19,16 +19,17 @@ import java.util.Queue;
 public class Testapplicaion {
     @Test
     public void Test() {
-        File file1 = new File("C:/Users/F3863479/Desktop/Test/a");
-        file1.mkdir();
+        File file1 = new File("C:\\Users\\F3863479\\Desktop\\Test\\间谍过家家\\2");
+        boolean delete = file1.delete();
+        System.out.println(delete);
     }
 
     @Test
     public void Test2() {
-        Queue<String> queue = new LinkedList<String>();
-        queue.offer("string"); // add
-        System.out.println(queue.poll());
-        System.out.println(queue.remove());
-        System.out.println(queue.size());
+        int a=10;
+        int b=a;
+        b=12;
+        System.out.println("a"+a);
+        System.out.println("b"+b);
     }
 }

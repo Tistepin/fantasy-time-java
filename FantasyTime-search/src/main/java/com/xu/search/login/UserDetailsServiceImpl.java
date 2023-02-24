@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
-    //    @Autowired
+//    @Autowired
 //    UserService userService;
 //    @Autowired
 //    RolesService rolesService;

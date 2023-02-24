@@ -13,4 +13,5 @@ public interface MallSearchService {
     Boolean WorksUp(WorksEsModel worksEsModels) throws IOException;
 
     SearchResult search(SearchParam searchParam);
+
 }

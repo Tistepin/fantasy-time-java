@@ -81,7 +81,7 @@ public class SwaggerConfig {
     Docket docketSearch() {
         List<Parameter> parameters = new ArrayList<>();
         parameters.add(new ParameterBuilder()
-                .name("token")
+                .name("FantasyTimetoken")
                 .description("认证token")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")

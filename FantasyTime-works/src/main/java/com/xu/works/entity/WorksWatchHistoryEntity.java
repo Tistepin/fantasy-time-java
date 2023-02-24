@@ -6,17 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 观看历史记录
  * 
  * @author xuguoji
  * @email 2532878663@qq.com
- * @date 2023-01-09 15:30:20
+ * @date 2023-02-13 10:10:53
  */
 @Data
 @TableName("ft_works_watch_history")
@@ -49,6 +46,14 @@ public class WorksWatchHistoryEntity implements Serializable {
 	 */
 	private Long worksHistoryViewingChapter;
 	/**
+	 * 用户观看到第几章的ID
+	 */
+	private Long worksHistoryViewingChapterId;
+	/**
+	 * 用户观看到第几章的的第几张图片
+	 */
+	private Long worksHistoryViewingChapterImage;
+	/**
 	 * 作品分类 1-漫画 2-小说
 	 */
 	private Integer worksType;
@@ -63,14 +68,10 @@ public class WorksWatchHistoryEntity implements Serializable {
 	/**
 	 * 注册时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 	/**
 	 * 修改时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date editTime;
 
 }

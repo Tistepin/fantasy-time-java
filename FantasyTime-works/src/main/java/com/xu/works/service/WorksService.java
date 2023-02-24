@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.WorksEntity;
 import com.xu.works.to.ReviewWorksTo;
+import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.to.WorksTo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
@@ -58,8 +59,10 @@ public interface WorksService extends IService<WorksEntity> {
 
     void UpEs(Long worksID) throws Exception;
 
-    PageUtils queryPage(Integer page, Integer limit);
+    PageUtils queryPage(Integer page, Integer limit, Integer reviewStatus, Integer delete_status);
 
     void review(ReviewWorksTo reviewWorksTo, HttpServletRequest httpRequest) throws Exception;
+
+    void WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo);
 }
 

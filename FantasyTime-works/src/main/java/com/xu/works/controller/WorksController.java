@@ -1,18 +1,23 @@
 package com.xu.works.controller;
 
+import com.rabbitmq.client.Channel;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.R;
 import com.xu.works.service.WorksService;
 import com.xu.works.to.ReviewWorksTo;
+import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.to.WorksTo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 import io.swagger.annotations.*;
 import org.apache.http.HttpRequest;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -88,7 +93,7 @@ public class WorksController {
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getPopularSerial")
-    public R getPopularSerial(@RequestParam() Integer area, Integer worksType) {
+    public R getPopularSerial( Integer area, Integer worksType) {
         List<WorksVo> worksEntities = worksService.getPopularSerial(area, worksType);
         return R.ok().data("data", worksEntities);
     }
@@ -365,7 +370,8 @@ public class WorksController {
      * @Params [WorksCategory]
      */
     @ApiOperation(value = "上传作品", notes = "上传作品")
-    @ApiImplicitParam(name = "worksTo", value = "上传章节数据To ", paramType = "body", required = true, dataType = "WorksTo")
+    @ApiImplicitParam(name = "worksTo", value = "上传章节数据To ", paramType = "body", required = true,
+            dataType = "WorksTo")
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
@@ -413,15 +419,17 @@ public class WorksController {
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "page", value = "页", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
-                    @ApiImplicitParam(name = "limit", value = "页面个数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+                    @ApiImplicitParam(name = "limit", value = "页面个数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "reviewStatus", value = "审核状态 0-审核中 1-审核成功 2-审核失败", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "deleteStatus", value = "逻辑删除状态 0-已删除 1-未删除", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
             }
     )
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/list")
-    public R list(Integer page,Integer limit){
-        PageUtils pages =worksService.queryPage(page,limit);
+    public R list(Integer page,Integer limit,Integer reviewStatus,Integer deleteStatus){
+        PageUtils pages =worksService.queryPage(page,limit,reviewStatus,deleteStatus);
         return R.ok().data("page", pages);
     }/**
      * @Description 作品审核
@@ -445,4 +453,19 @@ public class WorksController {
         }
         return R.ok();
     }
+
+
+    // 作品章节审核后 更新作品详细信息和书架
+    @RabbitListener(queues = "works.update.queue")
+    public R WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo, Channel channel , Message message) throws IOException {
+        try {
+            worksService.WorksInBookshelfUpdate(saveBookToShelfTo);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        }catch (Exception e){
+            e.fillInStackTrace();
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(),true);
+        }
+        return R.ok();
+    }
+
 }

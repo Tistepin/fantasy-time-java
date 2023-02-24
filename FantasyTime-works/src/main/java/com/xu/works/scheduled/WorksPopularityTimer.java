@@ -100,7 +100,7 @@ public class WorksPopularityTimer {
         List<PopularityEntity> popularityEntities = popularityService.listByIds(worksId);
         for (PopularityEntity popularityEntity : popularityEntities) {
             Long worksId1 = popularityEntity.getWorksId();
-            Long TodayPopularity = stringStringLinkedHashMap.get(worksId1);
+            Long TodayPopularity = stringStringLinkedHashMap.get(worksId1.toString());
             // 总人气增加
             popularityEntity.setWorksPopularityCount(popularityEntity.getWorksPopularityCount() + TodayPopularity);
             // 三天人气增加

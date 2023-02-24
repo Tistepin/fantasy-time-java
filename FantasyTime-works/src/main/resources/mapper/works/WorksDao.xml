@@ -51,8 +51,12 @@
     <select id="getPopularSerial" resultType="com.xu.works.entity.WorksEntity">
         select works_id, works_name, default_image, works_renew, works_popularity, works_type,works_describe
         from ft_works
-        where works_area = 1
-          and delete_status = 1
+        where
+            <if test="area!=null and area != '' ">
+                works_area = #{area}
+          and
+            </if>
+              delete_status = 1
           and review_status=1
           and works_type = #{worksType}
         order by works_popularity desc

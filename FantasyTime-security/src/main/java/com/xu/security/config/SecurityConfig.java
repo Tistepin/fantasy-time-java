@@ -100,7 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.GET);
         //swagger相关接口
-        web.ignoring().antMatchers("/swagger-ui.html","/swagger-resources/**","/webjars/**","/*/api-docs");
+        web.ignoring().antMatchers("/swagger-ui.html","/swagger-resources/**","/webjars/**","/*/api-docs","/works/user/regist");
     }
 
 

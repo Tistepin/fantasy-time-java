@@ -245,33 +245,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
      */
     @Override
     public void UpEs(Long worksID) throws Exception {
-        WorksEntity worksEntity = this.baseMapper.selectOne(new QueryWrapper<WorksEntity>().eq("works_id", worksID));
-        WorksEsModel worksEsModel = new WorksEsModel();
-        BeanUtils.copyProperties(worksEntity, worksEsModel);
-        worksEsModel.setWorksCreateTime(worksEntity.getWorksCreateTime().toString());
-        // 获取中文版本的国家地区
-        CompletableFuture<Void> AreaEntityAsync = CompletableFuture.runAsync(() -> {
-            AreaEntity areaEntity = areaService.getOne(new QueryWrapper<AreaEntity>().eq("id", worksEntity.getWorksArea()));
-            worksEsModel.setWorksAreaName(areaEntity.getName());
-        }, executor);
-        // 获取 作品类别name
-        CompletableFuture<Void> categorysNameAsync = CompletableFuture.runAsync(() -> {
-            // 获取作品类型 小说还是漫画
-            Long worksType = worksEntity.getWorksType();
-            // 获取类别 集合
-            String[] split = worksEntity.getWorksCategory().split(",");
-            String categorysName = categoryService.getCategorysName(split, Math.toIntExact(worksType) == 3 ? 1 : Math.toIntExact(worksType) == 1 ? 1 : 2);
-//            AreaEntity areaEntity = categoryService.getOne(new QueryWrapper<AreaEntity>().eq("id", worksEntity.getWorksArea()));
-            worksEsModel.setWorksCategoryName(categorysName);
-        }, executor);
-        try {
-            CompletableFuture.allOf(AreaEntityAsync, categorysNameAsync).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        Date createTime = worksEntity.getCreateTime();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-DD");
-        worksEsModel.setWorksCreateTime(simpleDateFormat.format(createTime));
+        WorksEsModel worksEsModel = GetWorksEsModel(worksID);
         // 数据收集成功 开始上传到es
 //        System.out.println(worksEsModel);
         R r = searchFeignService.WorksUp(worksEsModel);
@@ -614,5 +588,52 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 .set("works_renew",WorksRenew)
                 .set("works_update_time",new Date(System.currentTimeMillis()))
         );
+        UpdateWorksEs( worksId);
+    }
+
+    @Override
+    public void UpdateWorksEs(Long worksID) {
+        WorksEsModel worksEsModel = GetWorksEsModel(worksID);
+        R r = searchFeignService.UpdateEs(worksEsModel);
+        if (r.getCode() == 20000) {
+            System.out.println("成功");
+        } else {
+            throw new RuntimeException("es修改失败");
+        }
+    }
+
+    // 獲取es需要的WorksEsModel
+    private WorksEsModel GetWorksEsModel(Long worksID){
+        // 查到作品
+        WorksEntity worksEntity = this.baseMapper.selectOne(new QueryWrapper<WorksEntity>().eq("works_id", worksID));
+        // new esModel
+        WorksEsModel worksEsModel = new WorksEsModel();
+        // copy值
+        BeanUtils.copyProperties(worksEntity, worksEsModel);
+        worksEsModel.setWorksCreateTime(worksEntity.getWorksCreateTime().toString());
+        // 获取中文版本的国家地区
+        CompletableFuture<Void> AreaEntityAsync = CompletableFuture.runAsync(() -> {
+            AreaEntity areaEntity = areaService.getOne(new QueryWrapper<AreaEntity>().eq("id", worksEntity.getWorksArea()));
+            worksEsModel.setWorksAreaName(areaEntity.getName());
+        }, executor);
+        // 获取 作品类别name
+        CompletableFuture<Void> categorysNameAsync = CompletableFuture.runAsync(() -> {
+            // 获取作品类型 小说还是漫画
+            Long worksType = worksEntity.getWorksType();
+            // 获取类别 集合
+            String[] split = worksEntity.getWorksCategory().split(",");
+            String categorysName = categoryService.getCategorysName(split, Math.toIntExact(worksType) == 3 ? 1 : Math.toIntExact(worksType) == 1 ? 1 : 2);
+//            AreaEntity areaEntity = categoryService.getOne(new QueryWrapper<AreaEntity>().eq("id", worksEntity.getWorksArea()));
+            worksEsModel.setWorksCategoryName(categorysName);
+        }, executor);
+        try {
+            CompletableFuture.allOf(AreaEntityAsync, categorysNameAsync).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        Date createTime = worksEntity.getCreateTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-DD");
+        worksEsModel.setWorksCreateTime(simpleDateFormat.format(createTime));
+        return worksEsModel;
     }
 }

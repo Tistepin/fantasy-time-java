@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -30,14 +31,23 @@ public class FantasyTimeSearchTest {
     public void Test1() throws IOException {
         HashMap<String, String> map = new HashMap<>();
         map.put("defaultImage","http://10.161.139.216/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=1");
-        for (int i = 12; i <22 ; i++) {
+        UpdateRequest.Builder<Object, Object> defaultImage = new UpdateRequest.Builder<>().index(EsConstant.WORKS_INDEX);
+        UpdateRequest<Object, Object> build = defaultImage.id(String.valueOf(1))
+                .doc(map)
+                .build();
+        client.update(build,Object.class);
 
-                UpdateRequest.Builder<Object, Object> defaultImage = new UpdateRequest.Builder<>().index(EsConstant.WORKS_INDEX);
-                UpdateRequest<Object, Object> build = defaultImage.id(String.valueOf(i))
-                        .doc(map)
-                        .build();
-                    client.update(build,Object.class);
-        }
+    }
+
+    @Test
+    public void Test2() throws IOException {
+        float a=1.4F;
+        BigDecimal bigDecimal = BigDecimal.valueOf(a);
+        System.out.println(bigDecimal);
+    }
+
+    @Test
+    public void Test3() throws IOException {
 
 
     }

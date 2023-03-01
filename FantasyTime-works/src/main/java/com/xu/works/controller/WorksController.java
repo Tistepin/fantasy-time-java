@@ -431,7 +431,9 @@ public class WorksController {
     public R list(Integer page,Integer limit,Integer reviewStatus,Integer deleteStatus){
         PageUtils pages =worksService.queryPage(page,limit,reviewStatus,deleteStatus);
         return R.ok().data("page", pages);
-    }/**
+    }
+
+    /**
      * @Description 作品审核
      * @Author F3863479
      * @Date 2023/2/1 下午 01:18
@@ -453,6 +455,31 @@ public class WorksController {
         }
         return R.ok();
     }
+
+
+    /**
+     * @Description es作品更新
+     * @Author F3863479
+     * @Date 2023/2/1 下午 01:18
+     * @Params [worksTo, request]
+     * @return com.xu.common.utils.R
+     *
+     */
+    @ApiOperation(value = "es作品更新", notes = "es作品更新")
+//    @ApiImplicitParam(name = "reviewWorksTo", value = "作品审核 ", paramType = "body", required = true, dataType = "ReviewWorksTo")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @PostMapping("/UpdateWorksEs")
+    public R UpdateWorksEs(@RequestParam("WorksID") Long WorksID) {
+        try {
+            worksService.UpdateWorksEs(WorksID);
+        } catch (Exception e) {
+            return R.error();
+        }
+        return R.ok();
+    }
+
 
 
     // 作品章节审核后 更新作品详细信息和书架

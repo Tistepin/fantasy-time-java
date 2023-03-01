@@ -58,7 +58,7 @@ public class SearchController {
         try {
             b = mallSearchService.WorksUp(worksEsModels);
         } catch (IOException e) {
-            log.error("es商品上架错误信息{}", e);
+            log.error("es上架错误信息{}", e);
             return R.error().code(BizCodeEnume.PRODUCT_UP_EXCEPTION.getCode()).message(BizCodeEnume.PRODUCT_UP_EXCEPTION.getMsg());
         }
         if (!b) {
@@ -72,20 +72,15 @@ public class SearchController {
 
     // 修改es的數據
 
-    //    @PostMapping("UpdateEs")
-//    public R WorksUp(){
-//        Boolean b=true;
-//        try {
-//            b = mallSearchService.WorksUp(worksEsModels);
-//        } catch (IOException e) {
-//            log.error("es商品上架错误信息{}",e);
-//            return R.error().code(BizCodeEnume.PRODUCT_UP_EXCEPTION.getCode()).message(BizCodeEnume.PRODUCT_UP_EXCEPTION.getMsg());
-//        }
-//        if (!b){
-//            return R.ok();
-//        }else{
-//            return R.error().code(BizCodeEnume.PRODUCT_UP_EXCEPTION.getCode()).message(BizCodeEnume.PRODUCT_UP_EXCEPTION.getMsg());
-//        }
-//
-//    }
+    @PostMapping("UpdateEs")
+    public R UpdateEs(@RequestBody WorksEsModel worksEsModels) {
+        try {
+            mallSearchService.UpdateEs(worksEsModels);
+            return R.ok();
+        } catch (IOException e) {
+            log.error("修改es上架错误信息{1}", e);
+            return R.error().code(BizCodeEnume.PRODUCT_UP_EXCEPTION.getCode()).message(BizCodeEnume.PRODUCT_UP_EXCEPTION.getMsg());
+        }
+
+    }
 }

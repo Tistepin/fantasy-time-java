@@ -206,7 +206,7 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
             throw new RuntimeException("审核操作失敗");
         }
 
-        // TODO 发送RabbitMQ消息 告诉所有有依赖作品信息表的表更新时间 告知这个作品更新了
+        //
         SaveBookToShelfTo saveBookToShelfTo = new SaveBookToShelfTo();
         saveBookToShelfTo.setWorksId(reviewCartoonWorksTo.getWorksId());
         String s = JSONObject.toJSON(saveBookToShelfTo).toString();

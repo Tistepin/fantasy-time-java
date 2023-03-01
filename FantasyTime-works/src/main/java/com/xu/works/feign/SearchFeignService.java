@@ -16,4 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface SearchFeignService {
     @PostMapping("/search/WorksUp")
     R WorksUp(@RequestBody WorksEsModel worksEsModels);
+
+
+    @PostMapping("/search/UpdateEs")
+    R UpdateEs(@RequestBody WorksEsModel worksEsModels);
 }

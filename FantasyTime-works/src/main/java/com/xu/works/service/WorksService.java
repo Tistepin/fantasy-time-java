@@ -64,5 +64,7 @@ public interface WorksService extends IService<WorksEntity> {
     void review(ReviewWorksTo reviewWorksTo, HttpServletRequest httpRequest) throws Exception;
 
     void WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo);
+
+    void UpdateWorksEs(Long worksID);
 }
 

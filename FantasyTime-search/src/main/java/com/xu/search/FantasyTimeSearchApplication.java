@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,7 +18,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableDiscoveryClient // 服务注册与发现
 @ComponentScan("com.xu") // 扫
-
+@EnableFeignClients
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class FantasyTimeSearchApplication {
     public static void main(String[] args) {

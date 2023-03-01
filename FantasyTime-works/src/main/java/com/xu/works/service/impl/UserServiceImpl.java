@@ -134,10 +134,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             userEntity.setSign(sign);
         }
         Integer gender = userUpdateTo.getGender();
-        if (!(gender == 0)){
+        if (!(gender == null)){
             userEntity.setGender(gender);
         }
-//        this.baseMapper.updateById(userEntity);
+        this.baseMapper.updateById(userEntity);
     }
 
 }

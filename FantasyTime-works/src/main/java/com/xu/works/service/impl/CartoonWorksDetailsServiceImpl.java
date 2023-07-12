@@ -8,15 +8,13 @@ import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.Query;
 import com.xu.security.utils.TokenManager;
 import com.xu.works.dao.CartoonWorksDetailsDao;
-import com.xu.works.entity.CartoonWorksDetailsEntity;
-import com.xu.works.entity.UserEntity;
-import com.xu.works.entity.WorksChapterDetailedViewingContentEntity;
-import com.xu.works.entity.WorksEntity;
+import com.xu.works.entity.*;
 import com.xu.works.service.*;
 import com.xu.works.to.CartoonWorksDetailsEntityTo;
 import com.xu.works.to.ReviewCartoonWorksTo;
 import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.utils.FileTOZip;
+import com.xu.works.utils.LengthComparator;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageDeliveryMode;
@@ -35,10 +33,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -59,6 +54,8 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
     private WorksService worksService;
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    private WorksDefaultImageService worksDefaultImageService;
 
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
@@ -104,7 +101,20 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
     @Override
     @Transactional
     public String saveUploadChapterData(CartoonWorksDetailsEntityTo cartoonWorksDetailsEntityTo, HttpServletRequest request) {
-        // 先查询该漫画是否以及审核完成
+
+        // 给图片list排序 正序
+        List<String> worksChapterLocations = cartoonWorksDetailsEntityTo.getWorksChapterLocations();
+        Collections.sort(worksChapterLocations);
+        // 获取第一条数据
+        String s = worksChapterLocations.get(0);
+        // 分割字符串 判断是否删除第一条数据  要上删除就代表的是这是压缩包上传
+        String[] split = s.split("/");
+        if (split.length <= 1) {
+            // 删除第一条 这一条是文件夹路径
+            worksChapterLocations.remove(0);
+        }
+        worksChapterLocations.sort(new LengthComparator());
+//         先查询该漫画是否以及审核完成
         Long worksId = cartoonWorksDetailsEntityTo.getWorksId();
         WorksEntity works = worksService.getOne(new QueryWrapper<WorksEntity>().eq("works_id", worksId));
         if (works != null && works.getReviewStatus() == 1) {
@@ -118,6 +128,7 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
                 CartoonWorksDetailsEntity cartoonWorksDetailsEntity = new CartoonWorksDetailsEntity();
                 cartoonWorksDetailsEntity.setWorksId(worksId);
                 cartoonWorksDetailsEntity.setCartoonChapterId(cartoonChapterId);
+                cartoonWorksDetailsEntity.setEditTime(new Date());
                 cartoonWorksDetailsEntity.setCartoonChapterName(cartoonWorksDetailsEntityTo.getCartoonChapterName());
                 int size = cartoonWorksDetailsEntityTo.getWorksChapterLocations().size();
                 cartoonWorksDetailsEntity.setCartoonPages(String.valueOf(size));
@@ -136,12 +147,15 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
                 Long i = 1L;
                 for (String worksChapterLocation : cartoonWorksDetailsEntityTo.getWorksChapterLocations()) {
                     WorksChapterDetailedViewingContentEntity worksChapterDetailedViewingContentEntity = new WorksChapterDetailedViewingContentEntity();
-                    worksChapterDetailedViewingContentEntity.setWorksChapterId(cartoonWorksDetailsEntity.getCartoonChapterId());
+                    worksChapterDetailedViewingContentEntity.setWorksChapterId(cartoonWorksDetailsEntity.getId());
                     worksChapterDetailedViewingContentEntity.setUserId(userID);
                     worksChapterDetailedViewingContentEntity.setWorksId(worksId);
                     worksChapterDetailedViewingContentEntity.setWorksChapterLocation(worksChapterLocation);
                     if (works.getWorksType() == 3) {
                         worksChapterDetailedViewingContentEntity.setReviewStatus(1L);
+                        // 如果是插图就直接拿取封面图片
+                        String worksDefaultImage = worksDefaultImageService.getOne(new QueryWrapper<WorksDefaultImageEntity>().eq("works_id", worksId).select("works_default_image")).getWorksDefaultImage();
+                        worksChapterDetailedViewingContentEntity.setWorksChapterLocation(worksDefaultImage);
                     } else {
 
                         worksChapterDetailedViewingContentEntity.setReviewStatus(0L);
@@ -154,9 +168,9 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
 
                 return "OK";
             }
-            return "FAIL";
+            return "FAIL,已上传该章节";
         } else {
-            return "FAIL";
+            return "FAIL,未完成审核";
         }
     }
 
@@ -241,8 +255,8 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
             if (substring.equals("\\")) {
                 zipFilePath = zipFilePath + worksEntity.getWorksName() + "/" + cartoonWorksDetailsEntity.getCartoonChapterId();
                 FileTOZip.fileToZip(sourceFilePath, zipFilePath, worksEntity.getWorksName());
-            }else{
-                zipFilePath = zipFilePath +"\\"+ worksEntity.getWorksName() + "\\" + cartoonWorksDetailsEntity.getCartoonChapterId();
+            } else {
+                zipFilePath = zipFilePath + "\\" + worksEntity.getWorksName() + "\\" + cartoonWorksDetailsEntity.getCartoonChapterId();
                 File file = new File(zipFilePath);
                 boolean mkdirs = file.mkdirs();
                 FileTOZip.fileToZip(sourceFilePath, zipFilePath, cartoonWorksDetailsEntity.getCartoonChapterName());
@@ -251,5 +265,22 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
             throw new RuntimeException("没有章节信息");
         }
 
+    }
+
+    /**
+     * @Description 获取指定章节信息
+     * @Author F3863479
+     * @Date 2023/7/10 下午 01:35
+     * @Params [worksChapterId, zipFilePath]
+     * @return com.xu.works.to.ReviewCartoonWorksTo
+     *
+     */
+    @Override
+    public ReviewCartoonWorksTo getChapterInfo(Integer worksId, Integer cartoonChapterId) {
+        CartoonWorksDetailsEntity cartoonWorksDetailsEntity = this.baseMapper.selectOne(new QueryWrapper<CartoonWorksDetailsEntity>()
+                .eq("works_id", worksId).eq("cartoon_chapter_id", cartoonChapterId + 1).eq("delete_status", 1));
+        ReviewCartoonWorksTo reviewCartoonWorksTo=new ReviewCartoonWorksTo();
+        BeanUtils.copyProperties(cartoonWorksDetailsEntity,reviewCartoonWorksTo);
+        return reviewCartoonWorksTo;
     }
 }

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,14 +72,18 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = securityUser.getUsername();
         String token = tokenManager.createToken(username);
         //3.把用户名和用户权限列表放入redis
-        Boolean aBoolean = stringRedisTemplate.hasKey(username);
+        boolean aBoolean = stringRedisTemplate.hasKey(username) != null;
         if (!aBoolean){
             stringRedisTemplate.opsForList().leftPushAll(username,securityUser.getPermissionValueList());
         }
-
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("UserName",username);
+        map.put("FantasyTimetoken",token);
+        R data = R.ok();
+        data.data(map);
         // 4.返回token
-        ResponseUtil.out(response, R.ok().data("data",username));
-        ResponseUtil.out(response, R.ok().data("FantasyTimetoken",token));
+        ResponseUtil.out(response, data);
+//        ResponseUtil.out(response, R.ok().data("FantasyTimetoken",token));
 
     }
 

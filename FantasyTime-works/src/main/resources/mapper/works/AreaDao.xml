@@ -11,5 +11,8 @@
         <result property="createTime" column="create_time"/>
         <result property="editTime" column="edit_time"/>
     </resultMap>
+    <select id="getList" resultType="com.xu.works.vo.DownListVo">
+        SELECT id VALUE, name LABEL from ft_area where id not in (1)
+    </select>
 
 </mapper>

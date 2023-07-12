@@ -34,11 +34,11 @@ spring:
     # 如果消息成功抵达队列 就以异步的方式优先回调
     template:
       mandatory: true
-  zipkin:
-    base-url: http://localhost:9411
-  sleuth:
-    sampler:
-      rate: 1
+#  zipkin:
+#    base-url: http://localhost:9411
+#  sleuth:
+#    sampler:
+#      rate: 1
 #  jackson:
 #    date-format: yyyy-mm-dd hh:mm:ss
 

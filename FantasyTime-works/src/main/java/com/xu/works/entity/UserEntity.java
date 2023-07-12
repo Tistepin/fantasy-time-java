@@ -69,6 +69,8 @@ public class UserEntity implements Serializable {
 	 * 生日
 	 */
 	@ApiModelProperty(value = "生日",name = "birth",example = "",required = false,position = 9)
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birth;
 	/**
 	 * 所在城市

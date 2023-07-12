@@ -68,12 +68,12 @@ public class CartoonWorksDetailsController {
     public R saveUploadChapterData(@RequestBody CartoonWorksDetailsEntityTo cartoonWorksDetailsEntityTo,
                                    HttpServletRequest request) {
         String s = cartoonWorksDetailsService.saveUploadChapterData(cartoonWorksDetailsEntityTo, request);
-        if (s.equalsIgnoreCase("FAIL")){
-            R error = R.error();
-            error.setMessage("保存失败");
-            return error;
+        if (s.equalsIgnoreCase("OK")){
+            return R.ok();
         }
-        return R.ok();
+        R error = R.error();
+        error.setMessage(s);
+        return error;
     }
 
     @ApiOperation(value = "作品的要审核的章节目录", notes = "作品的要审核的章节目录")
@@ -130,6 +130,25 @@ public class CartoonWorksDetailsController {
     public R getChapterWorksZip(String zipFilePath,Integer worksChapterId) {
         cartoonWorksDetailsService.getChapterWorksZip(worksChapterId,zipFilePath);
         return R.ok();
+    }
+
+    // 获取指定章节信息
+    @ApiOperation(value = "获取指定章节信息", notes = "获取指定章节信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "worksId", value = "作品ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+            @ApiImplicitParam(name = "cartoonChapterId", value = "第几话", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("getChapterInfo")
+    public R getChapterInfo(@RequestParam Integer worksId,@RequestParam  Integer cartoonChapterId) {
+        ReviewCartoonWorksTo r=cartoonWorksDetailsService.getChapterInfo(worksId,cartoonChapterId);
+        if (r!=null){
+            return R.ok().data("data",r);
+        }else{
+            return R.error();
+        }
     }
 
 }

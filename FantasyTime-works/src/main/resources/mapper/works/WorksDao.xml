@@ -117,7 +117,7 @@
     <select id="getthisWeekLeaderboardTop" resultMap="worksMap">
         select *
         from ft_works w
-                 left join (select works_id,
+                 inner join (select works_id,
                                    works_popularity_thisWeek
                             from ft_popularity
                             where delete_status = #{worksType}) p on w.works_id = p.works_id
@@ -130,7 +130,7 @@
     <select id="getthreeDaysLeaderboardTop" resultMap="worksMap">
         select *
         from ft_works w
-                 left join (select works_id,
+                 inner join (select works_id,
                                    works_popularity_three_days
                             from ft_popularity
                             where delete_status = #{worksType}) p on w.works_id = p.works_id
@@ -143,7 +143,7 @@
     <select id="getthisMonthDaysLeaderboardTop" resultMap="worksMap">
         select *
         from ft_works w
-                 left join (select works_id,
+                 inner join (select works_id,
                                    works_popularity_thisMonth
                             from ft_popularity
                             where delete_status = #{worksType}) p on w.works_id = p.works_id
@@ -166,7 +166,7 @@
                works_renew,
                works_popularity,
                works_describe,
-               works_category,
+               GET_CATEGORY_NAME(works_category) works_category,
                works_status,
                edit_time
         from ft_works
@@ -223,6 +223,9 @@
         <foreach collection="worksIds" item="item" open="(" close=")" separator=",">
             ${item}
         </foreach>
+    </select>
+    <select id="GetWorksDownList" resultType="com.xu.works.vo.DownListVo">
+        SELECT works_id VALUE, works_name LABEL from ft_works where creator=#{id} and works_type=1
     </select>
 
 

@@ -11,7 +11,7 @@ import com.xu.works.entity.WorksDefaultImageEntity;
 import com.xu.works.service.WorksDefaultImageService;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.R;
-
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -42,9 +42,9 @@ public class WorksDefaultImageController {
     /**
      * 保存
      */
-    @PutMapping("/save")
-    public R save(@RequestBody WorksDefaultImageEntity worksDefaultImage){
-		worksDefaultImageService.save(worksDefaultImage);
+    @PostMapping("/save")
+    public R save( @RequestBody WorksDefaultImageEntity worksDefaultImageEntity){
+		worksDefaultImageService.save(worksDefaultImageEntity);
         return R.ok();
     }
 

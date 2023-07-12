@@ -46,9 +46,12 @@ public class SearchController {
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping(value = "/getWorks")
-    public SearchResult listPage(SearchParam searchParam) {
+    public R listPage(SearchParam searchParam) {
         SearchResult result = mallSearchService.search(searchParam);
-        return result;
+        if (result!=null){
+            return R.ok().data("data",result);
+        }
+        return R.error();
     }
 
 

@@ -21,6 +21,9 @@
             </foreach>
             )
     </select>
+    <select id="GetCategoryDownList" resultType="com.xu.works.vo.DownListVo">
+        SELECT CAT_ID VALUE ,NAME LABEL FROM FT_CATEGORY WHERE WORKS_TYPE=#{worksTyp} AND SORT NOT IN (1)
+    </select>
 
 
 </mapper>

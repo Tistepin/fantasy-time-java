@@ -1,5 +1,6 @@
 package com.xu.works.service.impl;
 
+import com.xu.works.vo.DownListVo;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public String getCategorysName(String[] split, Integer worksType) {
         return this.baseMapper.getCategorysName(split,worksType);
+    }
+
+    @Override
+    public List<DownListVo> GetCategoryDownList(Integer worksTyp) {
+        return this.baseMapper.GetCategoryDownList(worksTyp);
     }
 
 }

@@ -2,8 +2,11 @@ package com.xu.works.dao;
 
 import com.xu.works.entity.CategoryEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.xu.works.vo.DownListVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 作品类型
@@ -16,4 +19,6 @@ import org.apache.ibatis.annotations.Param;
 public interface CategoryDao extends BaseMapper<CategoryEntity> {
 
     String getCategorysName(@Param("catIds") String[] catIds, @Param("worksType") Integer worksType);
+
+    List<DownListVo> GetCategoryDownList(@Param("worksTyp") Integer worksTyp);
 }

@@ -27,7 +27,7 @@ public class ReviewCartoonWorksTo {
     /**
      * 漫画章节ID 第几话
      */
-    private String cartoonChapterId;
+    private Long cartoonChapterId;
     /**
      * 漫画章节名字
      */

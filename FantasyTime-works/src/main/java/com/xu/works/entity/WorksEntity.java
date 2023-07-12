@@ -54,7 +54,7 @@ public class WorksEntity implements Serializable {
 	 */
 	private String worksArea;
 	/**
-	 * 作品类型 1-漫画 2-小说
+	 * 作品类型 1-漫画 2-小说 3 插图
 	 */
 	private Long worksType;
 	/**
@@ -88,13 +88,13 @@ public class WorksEntity implements Serializable {
 	/**
 	 * 注册时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 	/**
 	 * 修改时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date editTime;
 	/**

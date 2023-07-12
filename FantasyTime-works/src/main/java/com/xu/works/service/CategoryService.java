@@ -3,6 +3,7 @@ package com.xu.works.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.CategoryEntity;
+import com.xu.works.vo.DownListVo;
 
 import java.util.List;
 import java.util.Map;
@@ -21,5 +22,7 @@ public interface CategoryService extends IService<CategoryEntity> {
     List<CategoryEntity> getCategory(Integer worksType);
 
     String getCategorysName(String[] split, Integer worksType);
+
+    List<DownListVo> GetCategoryDownList(Integer worksTyp);
 }
 

@@ -1,8 +1,10 @@
 package com.xu.works.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xu.works.entity.WorksEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xu.works.to.ReviewWorksTo;
+import com.xu.works.vo.DownListVo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -49,4 +51,6 @@ public interface WorksDao extends BaseMapper<WorksEntity> {
     List<WorksVo> getWorksInfo(@Param("worksIds") List<Long> worksIds);
 
     void review(@Param("reviewWorksTo") ReviewWorksTo reviewWorksTo);
+
+    List<DownListVo> GetWorksDownList(@Param("id") Long id);
 }

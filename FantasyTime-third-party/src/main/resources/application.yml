@@ -1,14 +1,20 @@
 spring:
   application:
     name: fantasytime-third-party
-  zipkin:
-    base-url: http://localhost:9411
-  sleuth:
-    sampler:
-      rate: 1
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 500MB
+
+  #  zipkin:
+#    base-url: http://localhost:9411
+#  sleuth:
+#    sampler:
+#      rate: 1
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
 server:
   port: 9100
+

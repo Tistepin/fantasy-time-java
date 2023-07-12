@@ -3,6 +3,7 @@ package com.xu.works.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.WorksDefaultImageEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -18,5 +19,6 @@ public interface WorksDefaultImageService extends IService<WorksDefaultImageEnti
     PageUtils queryPage(Map<String, Object> params);
 
     WorksDefaultImageEntity getWorksDefaultImage(Long worksId);
+
 }
 

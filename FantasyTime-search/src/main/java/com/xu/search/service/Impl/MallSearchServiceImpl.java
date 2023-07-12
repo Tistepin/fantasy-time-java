@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.WildcardQuery;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Description:
@@ -82,7 +84,7 @@ public class MallSearchServiceImpl implements MallSearchService {
     @Override
     public void UpdateEs(WorksEsModel worksEsModels) throws IOException {
         UpdateRequest.Builder<Object, Object> defaultImage = new UpdateRequest.Builder<>().index(EsConstant.WORKS_INDEX);
-        UpdateRequest<Object, Object> build = defaultImage.id(String.valueOf(1))
+        UpdateRequest<Object, Object> build = defaultImage.id(String.valueOf(worksEsModels.getWorksId()))
                 .doc(worksEsModels)
                 .build();
         UpdateResponse<Object> update = client.update(build, Object.class);
@@ -98,8 +100,10 @@ public class MallSearchServiceImpl implements MallSearchService {
         if (!hits.hits().isEmpty()) {
             List<WorksEsModel> skuEsModels = new ArrayList<>();
             for (Hit<HashMap> hit : hits.hits()) {
-                WorksEsModel worksEsModel = JSON.parseObject(JSON.toJSONString(hit.source()), WorksEsModel.class);
-                skuEsModels.add(worksEsModel);
+                if (Objects.equals(hit.score(), hits.maxScore())){
+                    WorksEsModel worksEsModel = JSON.parseObject(JSON.toJSONString(hit.source()), WorksEsModel.class);
+                    skuEsModels.add(worksEsModel);
+                }
             }
             searchResult.setWorks(skuEsModels);
         }

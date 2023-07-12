@@ -16,10 +16,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface WorksBookshelfService extends IService<WorksBookshelfEntity> {
 
-    PageUtils queryPage(Integer worksType, Integer page, Integer limit);
+    PageUtils queryPage(Integer worksType, Integer page, Integer limit, HttpServletRequest request);
 
     void saveBookToShelf(SaveBookToShelfTo saveBookToShelfTo, HttpServletRequest request);
 
     void unsubscribe(SaveBookToShelfTo saveBookToShelfTo, HttpServletRequest request);
+
+    Boolean GetYesOrNoFavorite(Integer worksId, HttpServletRequest request);
 }
 

@@ -92,5 +92,25 @@ public class CategoryController {
     }
 
 
+    /**
+     * @Description
+     * @Date 2023/1/6 下午 01:44
+     * @Params [params]
+     * @return com.xu.common.utils.R
+     *
+     */
+    @ApiOperation(value = "作品题材下拉框", notes = "作品题材下拉框")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "worksType", value = "作品类型", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+            }
+    )
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/getCategoryDownList")
+    public R GetCategoryDownList(@RequestParam Integer worksTyp){
 
+        return R.ok().data("list",categoryService.GetCategoryDownList(worksTyp));
+    }
 }

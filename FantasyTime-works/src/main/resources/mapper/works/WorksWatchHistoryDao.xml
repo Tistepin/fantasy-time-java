@@ -31,5 +31,9 @@
                   + (SELECT MIN(U3.id) FROM ft_works_watch_history AS U3))
         LIMIT 10;
     </select>
+    <select id="GetMaxWorksHistoryInfo" resultType="com.xu.works.entity.CartoonWorksDetailsEntity">
+        select cartoon_chapter_id,create_time from ft_cartoon_works_details t where works_id=#{worksId} order by cartoon_chapter_id desc limit 1
+
+    </select>
 
 </mapper>

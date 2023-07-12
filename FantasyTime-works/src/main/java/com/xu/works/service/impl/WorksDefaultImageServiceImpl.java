@@ -11,6 +11,7 @@ import com.xu.common.utils.Query;
 import com.xu.works.dao.WorksDefaultImageDao;
 import com.xu.works.entity.WorksDefaultImageEntity;
 import com.xu.works.service.WorksDefaultImageService;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service("worksDefaultImageService")
@@ -28,8 +29,9 @@ public class WorksDefaultImageServiceImpl extends ServiceImpl<WorksDefaultImageD
 
     @Override
     public WorksDefaultImageEntity getWorksDefaultImage(Long worksId) {
-        WorksDefaultImageEntity worksDefaultImageEntity = this.baseMapper.selectOne(new QueryWrapper<WorksDefaultImageEntity>().eq("works_id", worksId));
-        return worksDefaultImageEntity;
+        return this.baseMapper.selectOne(new QueryWrapper<WorksDefaultImageEntity>().eq("works_id", worksId));
     }
+
+
 
 }

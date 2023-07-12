@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 
 
 /**
@@ -40,12 +39,12 @@ public class WorksBookshelfController {
                     @ApiImplicitParam(name = "limit", value = "每页条数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
             }
     )
-    @ApiOperation(value = "获取书架", notes = "注册用户信息")
+    @ApiOperation(value = "获取书架", notes = "获取书架")
     @GetMapping("/getWorksBookshelf")
     public R getWorksBookshelf(@RequestParam Integer worksType,
                                @RequestParam Integer page,
-                               @RequestParam Integer limit) {
-        PageUtils pages = worksBookshelfService.queryPage(worksType, page, limit);
+                               @RequestParam Integer limit, HttpServletRequest request) {
+        PageUtils pages = worksBookshelfService.queryPage(worksType, page, limit, request);
         return R.ok().data("page", pages);
     }
 
@@ -84,9 +83,30 @@ public class WorksBookshelfController {
     @ApiOperation(value = "取消订阅指定作品", notes = "取消订阅指定作品")
     @DeleteMapping("/unsubscribe")
     public R unsubscribe(@RequestBody SaveBookToShelfTo saveBookToShelfTo, HttpServletRequest request) {
-        worksBookshelfService.unsubscribe(saveBookToShelfTo,request);
-
+        worksBookshelfService.unsubscribe(saveBookToShelfTo, request);
         return R.ok();
+    }
+
+    /**
+     * @return com.xu.common.utils.R
+     * @Description 该用户是否收藏概述及
+     * @Author F3863479
+     * @Date 2023/7/6 下午 03:59
+     * @Params [saveBookToShelfTo, request]
+     */
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "worksId", value = "作品iD", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+            }
+    )
+    @ApiOperation(value = "查询订阅指定作品", notes = "查询订阅指定作品")
+    @GetMapping("/getYesOrNoFavorite")
+    public R GetYesOrNoFavorite(@RequestParam Integer worksId, HttpServletRequest request) {
+        Boolean bool = worksBookshelfService.GetYesOrNoFavorite(worksId, request);
+        if (bool) {
+            return R.ok();
+        }
+        return R.error();
     }
 
 }

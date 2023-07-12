@@ -9,16 +9,20 @@ import com.xu.works.constant.WorksEnum;
 import com.xu.works.dao.PopularityDao;
 import com.xu.works.entity.PopularityEntity;
 import com.xu.works.entity.UserEntity;
+import com.xu.works.entity.WorksEntity;
 import com.xu.works.service.PopularityService;
 import com.xu.works.service.UserService;
+import com.xu.works.service.WorksService;
 import com.xu.works.to.worksPopularityTodayTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -32,6 +36,8 @@ public class PopularityServiceImpl extends ServiceImpl<PopularityDao, Popularity
     ThreadPoolExecutor executor;
     @Autowired
     UserService userService;
+    @Autowired
+    WorksService worksService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -64,6 +70,7 @@ public class PopularityServiceImpl extends ServiceImpl<PopularityDao, Popularity
      * @Params [worksId, userId]
      */
     @Override
+    @Transactional
     public void saveWorksPopularity(Integer worksType, Integer worksId,
                                     HttpServletRequest request) {
         UserEntity userEntity = userService.getUserEntity(request);
@@ -75,9 +82,40 @@ public class PopularityServiceImpl extends ServiceImpl<PopularityDao, Popularity
             Boolean member = mhSetBound.isMember(String.valueOf(userId));
             // true 有 false 没有
             if (!member) {
-                //  没有则给作品添加人气
-                stringRedisTemplate.opsForZSet().incrementScore(WorksEnum.Works_mh_Enum.works_popularity_today_mh.getMsg(), String.valueOf(worksId),1);
-                mhSetBound.add(String.valueOf(userId));
+                // 查询人气表有无这条数据
+                PopularityEntity data = this.getOne(new QueryWrapper<PopularityEntity>().eq("works_id", worksId));
+                boolean bool =false;
+                if (data==null){
+                    // 添加人气表默认数据
+                    WorksEntity worksEntity = worksService.getById(worksId);
+                    PopularityEntity popularityEntity=new PopularityEntity();
+                    popularityEntity.setWorksId(Long.valueOf(worksId));
+                    popularityEntity.setName(worksEntity.getWorksName());
+                    popularityEntity.setWorksType(worksEntity.getWorksType().intValue());
+                    popularityEntity.setWorksStatus(worksEntity.getWorksStatus());
+                    popularityEntity.setWorksPopularityCount(0L);
+                    popularityEntity.setWorksPopularityToday(0L);
+                    popularityEntity.setWorksPopularityThreeDays(0L);
+                    popularityEntity.setWorksPopularityThisweek(0L);
+                    popularityEntity.setWorksPopularityThismonth(0L);
+                    popularityEntity.setDeleteStatus(worksEntity.getDeleteStatus());
+                    bool = this.baseMapper.insert(popularityEntity) >= 1;
+                }else{
+                    data.setWorksPopularityCount(data.getWorksPopularityCount()+1L);
+                    data.setWorksPopularityToday(data.getWorksPopularityToday()+1L);
+                    data.setWorksPopularityThreeDays(data.getWorksPopularityThreeDays()+1L);
+                    data.setWorksPopularityThisweek(data.getWorksPopularityThisweek()+1L);
+                    data.setWorksPopularityThismonth(data.getWorksPopularityThismonth()+1L);
+                    data.setEditTime(new Date(System.currentTimeMillis()));
+                    bool = this.baseMapper.updateById(data)>=1;
+                }
+
+                if (bool){
+                    //  没有则给作品添加人气
+                    stringRedisTemplate.opsForZSet().incrementScore(WorksEnum.Works_mh_Enum.works_popularity_today_mh.getMsg(), String.valueOf(worksId),1);
+                    mhSetBound.add(String.valueOf(userId));
+                }
+
             }
         } else if (worksType.equals(WorksEnum.Works_xs_Enum.works_xs.getCode())) {
             BoundSetOperations<String, String> mhSetBound = stringRedisTemplate.boundSetOps(WorksEnum.Works_xs_Enum.works_popularity_today_xs.getMsg()  + "_"+worksId);

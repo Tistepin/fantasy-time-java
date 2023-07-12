@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Description:
@@ -84,5 +85,32 @@ public class OssController {
             @RequestParam("url") String url) {
         fileService.removeFile(url);
         return R.ok();
+    }
+
+    @PostMapping("/policy3")
+    public R policy3(
+            //@ApiParam(value = "文件", required = true)
+            @RequestParam(value = "WorksName", required = false) String WorksName,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) throws IOException {
+        String url = fileService.upload(WorksName, "封面", file);
+        if (url != null && url.length() != 0) {
+
+            return R.ok().data("messages", "上传成功").data("url", url);
+        }
+        return R.error();
+    }
+
+    @PostMapping("/policy4")
+    public R policy4(
+            @RequestParam(value = "WorksName", required = false) String WorksName,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) throws IOException {
+        List<String> urls = fileService.policy4(WorksName, file);
+        if (urls != null && urls.size() != 0) {
+
+            return R.ok().data("messages", "上传成功").data("url", urls);
+        }
+        return R.error();
     }
 }

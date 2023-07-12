@@ -1,10 +1,17 @@
 package com.xu.works;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xu.common.utils.MD5;
+import com.xu.security.entity.User;
 import com.xu.works.constant.WorksEnum;
 import com.xu.works.dao.WorksDao;
+import com.xu.works.entity.PopularityEntity;
+import com.xu.works.entity.WorksEntity;
+import com.xu.works.scheduled.WorksPopularityTimer;
 import com.xu.works.service.PopularityService;
+import com.xu.works.service.WorksService;
 import com.xu.works.vo.WorksVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @SpringBootTest
 public class FantasyTimeSearchTest {
-    @Autowired
+    @Resource
     WorksDao worksDao;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
@@ -33,6 +40,8 @@ public class FantasyTimeSearchTest {
     RedisTemplate<String,String> redisTemplate;
     @Autowired
     PopularityService popularityService;
+    @Autowired
+    WorksService worksService;
     @Test
     void test(){
         ArrayList<String> strings = new ArrayList<>();
@@ -71,6 +80,40 @@ public class FantasyTimeSearchTest {
         System.out.println(a.hashCode());
     }
 
+
+    @Test
+    public void testJavaBean(){
+        WorksEntity worksEntity = worksDao.selectById(1);
+        String UserToStr = JSONUtil.toJsonStr(
+                worksEntity
+        );
+        //存入数据
+        stringRedisTemplate.opsForValue().set("user:1",UserToStr);
+    }
+
+    @Autowired
+    WorksPopularityTimer worksPopularityTimer;
+    @Test
+    void cs(){
+        // 获取今日排行榜的redis数据
+        BoundZSetOperations<String, String> works_popularity_today_mh_ZSet = stringRedisTemplate.boundZSetOps(WorksEnum.Works_mh_Enum.works_popularity_today_mh.getMsg());
+        // 获取zset 今日漫画人气全部是数据 包含worksId 和 人气值
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = works_popularity_today_mh_ZSet.reverseRangeWithScores(0, -1);
+        // 没有今日人气则不需要更新
+        if (typedTuples.size() != 0) {
+            // 获取数据集合
+            List<PopularityEntity> popularityEntities = worksPopularityTimer.getPopularityEntitys(typedTuples);
+            // 获取全部的数据后去数据库更新数据
+            boolean b = popularityService.updateBatchById(popularityEntities);
+            // 更新完成删除redis今日 三日 本周 本月 排行榜数据
+            if (b) {
+                stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_today_mh.getMsg());
+                stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_three_days_mh.getMsg());
+                stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_thisWeek_mh.getMsg());
+                stringRedisTemplate.delete(WorksEnum.Works_mh_Enum.works_popularity_thisMonth_mh.getMsg());
+            }
+        }
+    }
 
 
 }

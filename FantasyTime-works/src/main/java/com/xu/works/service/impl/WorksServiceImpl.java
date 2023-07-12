@@ -1,10 +1,13 @@
 package com.xu.works.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xu.common.TO.es.WorksEsModel;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.Query;
@@ -19,6 +22,7 @@ import com.xu.works.to.CartoonWorksDetailsEntityTo;
 import com.xu.works.to.ReviewWorksTo;
 import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.to.WorksTo;
+import com.xu.works.vo.DownListVo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 import org.springframework.beans.BeanUtils;
@@ -203,6 +207,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         }, executor);
         WorksEntity works = fantasyTimetoken.get();
         if (works.getWorksId() != null) {
+            // 上传封面图片
             CompletableFuture<Void> worksDefaultImageEntityCompletableFuture = CompletableFuture.runAsync(() -> {
                 WorksDefaultImageEntity worksDefaultImageEntity = new WorksDefaultImageEntity();
                 worksDefaultImageEntity.setWorksId(works.getWorksId());
@@ -212,9 +217,9 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
             }, executor);
             CompletableFuture.allOf(fantasyTimetoken, worksDefaultImageEntityCompletableFuture).get();
         }
-        works.setDefaultImage("http://localhost:9100/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
-        this.baseMapper.updateById(works);
         //
+        works.setDefaultImage("http://10.161.139.216/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
+        this.baseMapper.updateById(works);
     }
 
     @Override
@@ -298,10 +303,13 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
 
         // 获取作品id
         Long worksId = reviewWorksTo.getWorksId();
+        // 更新作品 审核状态
         CompletableFuture<Void> voidCompletableFuture = CompletableFuture.runAsync(() -> {
             // 修改作品的审核状态
             this.baseMapper.review(reviewWorksTo);
         }, executor);
+
+        // 更新作品上传记录 审核状态
         CompletableFuture<Void> voidCompletableFuture1 = CompletableFuture.runAsync(() -> {
             // 修改上传作品记录的审核状态
             // 先获取用户id
@@ -314,7 +322,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                     .set("review_status", 1)
             );
         }, executor);
-
+        voidCompletableFuture.get();
         CompletableFuture<Void> voidCompletableFuture2 = CompletableFuture.runAsync(() -> {
             WorksEntity worksEntity = this.baseMapper.selectById(worksId);
             if (worksEntity.getWorksType() == 3) {
@@ -326,7 +334,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 ArrayList<String> strings = new ArrayList<>();
                 strings.add(worksEntity.getDefaultImage());
                 cartoonWorksDetailsEntity.setWorksChapterLocations(strings);
-                cartoonWorksDetailsService.saveUploadChapterData(cartoonWorksDetailsEntity, httpRequest);
+                    cartoonWorksDetailsService.saveUploadChapterData(cartoonWorksDetailsEntity, httpRequest);
             }
         }, executor);
         CompletableFuture<Void> voidCompletableFuture3 = CompletableFuture.runAsync(() -> {
@@ -334,7 +342,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                     new UpdateWrapper<WorksDefaultImageEntity>().set("review_status", 1).eq("works_id", worksId)
             );
         }, executor);
-        CompletableFuture.allOf(voidCompletableFuture, voidCompletableFuture1, voidCompletableFuture2, voidCompletableFuture3).get();
+        Void unused = CompletableFuture.allOf(voidCompletableFuture, voidCompletableFuture1, voidCompletableFuture2, voidCompletableFuture3).get();
         // 审核完成 把作品上传到es
         UpEs(worksId);
     }
@@ -433,9 +441,9 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
      * @Params [worksType]
      */
     @Override
-    public Map<String, List<WorksVo>> getLeaderboard(Integer worksType) {
+    public Map<String, Object> getLeaderboard(Integer worksType, Integer page, Integer limit) {
         // 设置map收集数据
-        Map<String, List<WorksVo>> map = new LinkedHashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         // 今天人气前一百 从redis中zset集合拿取 增删改查也是在zset
         CompletableFuture<Void> dailyLeaderboard = CompletableFuture.runAsync(() -> {
             // 今天人气前一百 从redis中zset集合拿取 增删改查也是在zset
@@ -462,7 +470,12 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
             } else {
                 // 拿取 默认数据
             }
-            map.put("dailyLeaderboard", dailyLeaderboardList);
+            HashMap<String, Object> map1 = new HashMap<>();
+            map1.put("page",page);
+            map1.put("limit",limit);
+            map1.put("count",dailyLeaderboardList==null?0:dailyLeaderboardList.size());
+            map1.put("list",dailyLeaderboardList==null?null:dailyLeaderboardList.size()<=limit?dailyLeaderboardList:dailyLeaderboardList.subList((page-1)*limit, dailyLeaderboardList.size()>=page*limit?page*limit:dailyLeaderboardList.size()));
+            map.put("dailyLeaderboard", map1);
         }, executor);
         // 三天人气前一百
         CompletableFuture<Void> threeDaysLeaderboard = CompletableFuture.runAsync(() -> {
@@ -475,10 +488,15 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                     BeanUtils.copyProperties(item, worksVo);
                     return worksVo;
                 }).collect(Collectors.toList());
-                String s1 = JSONObject.toJSON(threeDaysLeaderboardList).toString();
+                String s1 = JSONUtil.toJsonStr(threeDaysLeaderboardList);
                 stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_three_days_mh.getMsg(), s1);
             }
-            map.put("threeDaysLeaderboard", threeDaysLeaderboardList);
+            HashMap<String, Object> map1 = new HashMap<>();
+            map1.put("page",page);
+            map1.put("limit",limit);
+            map1.put("count",threeDaysLeaderboardList==null?0:threeDaysLeaderboardList.size());
+            map1.put("list",threeDaysLeaderboardList.subList((page-1)*limit, threeDaysLeaderboardList.size()>=page*limit?page*limit:threeDaysLeaderboardList.size()));
+            map.put("threeDaysLeaderboard", map1);
         }, executor);
         // 本周人气前一百
         CompletableFuture<Void> thisWeekLeaderboard = CompletableFuture.runAsync(() -> {
@@ -496,7 +514,12 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 String s1 = JSONObject.toJSON(thisWeekLeaderboardLust).toString();
                 stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_thisWeek_mh.getMsg(), s1);
             }
-            map.put("thisWeekLeaderboard", thisWeekLeaderboardLust);
+            HashMap<String, Object> map1 = new HashMap<>();
+            map1.put("page",page);
+            map1.put("limit",limit);
+            map1.put("count",thisWeekLeaderboardLust.size());
+            map1.put("list",thisWeekLeaderboardLust.subList((page-1)*limit, thisWeekLeaderboardLust.size()>=page*limit?page*limit:thisWeekLeaderboardLust.size()));
+            map.put("thisWeekLeaderboard", map1);
         }, executor);
         // 今月人气前一百
         CompletableFuture<Void> thisMonthDaysLeaderboard = CompletableFuture.runAsync(() -> {
@@ -512,9 +535,20 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                     return worksVo;
                 }).collect(Collectors.toList());
                 String s1 = JSONObject.toJSON(thisMonthDaysLeaderboardList).toString();
-                stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_thisMonth_mh.getMsg(), s1);
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_thisMonth_mh.getMsg(),  mapper.writeValueAsString(thisMonthDaysLeaderboardList));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
-            map.put("thisMonthDaysLeaderboard", thisMonthDaysLeaderboardList);
+
+            HashMap<String, Object> map1 = new HashMap<>();
+            map1.put("page",page);
+            map1.put("limit",limit);
+            map1.put("count",thisMonthDaysLeaderboardList.size());
+            map1.put("list",thisMonthDaysLeaderboardList.subList((page-1)*limit, thisMonthDaysLeaderboardList.size()>=page*limit?page*limit:thisMonthDaysLeaderboardList.size()));
+            map.put("thisMonthDaysLeaderboard", map1);
         }, executor);
         try {
             CompletableFuture.allOf(dailyLeaderboard, threeDaysLeaderboard, thisWeekLeaderboard, thisMonthDaysLeaderboard).get();
@@ -588,18 +622,51 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 .set("works_renew",WorksRenew)
                 .set("works_update_time",new Date(System.currentTimeMillis()))
         );
-        UpdateWorksEs( worksId);
+        String s = UpdateWorksEs(worksId);
+        if (!s.equals("OK")) {
+            throw new RuntimeException("章节信息更新失败");
+        }
     }
 
     @Override
-    public void UpdateWorksEs(Long worksID) {
+    public String UpdateWorksEs(Long worksID) {
         WorksEsModel worksEsModel = GetWorksEsModel(worksID);
         R r = searchFeignService.UpdateEs(worksEsModel);
         if (r.getCode() == 20000) {
-            System.out.println("成功");
+            return "OK";
         } else {
-            throw new RuntimeException("es修改失败");
+           return "es修改失败";
         }
+    }
+
+    @Override
+    public Integer GetWorksCount(HttpServletRequest request) {
+        // 获取作品数量
+        UserEntity userEntity = userService.getUserEntity(request);
+        return this.baseMapper.selectCount(
+                new QueryWrapper<WorksEntity>().eq("creator",userEntity.getId()));
+    }
+
+    @Override
+    public Integer GeTCollectCount(HttpServletRequest request) {
+        // 获取作品数量
+        UserEntity userEntity = userService.getUserEntity(request);
+        return worksBookshelfService.count(new QueryWrapper<WorksBookshelfEntity>()
+                .eq("delete_status", 1).eq("user_id", userEntity.getId()));
+    }
+
+    @Override
+    public List<DownListVo> GetWorksDownList(HttpServletRequest request) {
+
+        // 获取作品数量
+        UserEntity userEntity = userService.getUserEntity(request);
+        return  this.baseMapper.GetWorksDownList(userEntity.getId());
+    }
+
+    /* 获取插图集 */
+    @Override
+    public List<WorksEntity> GetIllustration(HttpServletRequest request) {
+        return this.baseMapper.selectList(new QueryWrapper<WorksEntity>().eq("works_type", 3));
     }
 
     // 獲取es需要的WorksEsModel

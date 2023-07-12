@@ -82,5 +82,12 @@ public class AreaController {
 
         return R.ok();
     }
+    /**
+     * 地区下拉框
+     */
+    @GetMapping("/GetAreaDownList")
+    public R GetAreaDownList(){
 
+        return R.ok().data("list",areaService.getList());
+    }
 }

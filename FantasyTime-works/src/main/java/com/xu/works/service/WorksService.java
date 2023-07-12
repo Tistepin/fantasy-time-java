@@ -6,6 +6,7 @@ import com.xu.works.entity.WorksEntity;
 import com.xu.works.to.ReviewWorksTo;
 import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.to.WorksTo;
+import com.xu.works.vo.DownListVo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 
@@ -31,7 +32,7 @@ public interface WorksService extends IService<WorksEntity> {
 
     List<WorksVo> getPopularSerial(Integer area, Integer worksType);
 
-    Map<String,List<WorksVo>> getLeaderboard(Integer worksType);
+    Map<String,Object> getLeaderboard(Integer worksType, Integer page, Integer limit);
 
     List<WorksVo> getLatestCreation(Integer worksType);
 
@@ -65,6 +66,14 @@ public interface WorksService extends IService<WorksEntity> {
 
     void WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo);
 
-    void UpdateWorksEs(Long worksID);
+    String UpdateWorksEs(Long worksID);
+
+    Integer GetWorksCount(HttpServletRequest request);
+
+    Integer GeTCollectCount(HttpServletRequest request);
+
+    List<DownListVo> GetWorksDownList(HttpServletRequest request);
+
+    List<WorksEntity> GetIllustration(HttpServletRequest request);
 }
 

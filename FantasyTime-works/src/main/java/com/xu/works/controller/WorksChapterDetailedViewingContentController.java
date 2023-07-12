@@ -1,16 +1,15 @@
 package com.xu.works.controller;
 
 import com.xu.common.utils.PageUtils;
-import io.swagger.annotations.*;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import com.xu.common.utils.R;
 import com.xu.works.entity.WorksChapterDetailedViewingContentEntity;
 import com.xu.works.service.WorksChapterDetailedViewingContentService;
-import com.xu.common.utils.R;
-
-import java.util.Map;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -28,22 +27,22 @@ public class WorksChapterDetailedViewingContentController {
     private WorksChapterDetailedViewingContentService worksChapterDetailedViewingContentService;
 
     /**
+     * @return com.xu.common.utils.R
      * @Description 获取漫画的指定章节的指定图片
      * @Author F3863479
      * @Date 2023/2/1 上午 08:19
      * @Params [WorksId, WorksChapterId, ImageId]
-     * @return com.xu.common.utils.R
-     *
      */
     @GetMapping("/getImageData")
     public R getImageData(
             @RequestParam Integer WorksId,
             @RequestParam Integer WorksChapterId,
-            @RequestParam Integer ImageId){
-       WorksChapterDetailedViewingContentEntity worksChapterDetailedViewingContentEntity=
-               worksChapterDetailedViewingContentService.getImageData(WorksId,WorksChapterId,ImageId);
-        return R.ok().data("data",worksChapterDetailedViewingContentEntity);
+            @RequestParam Integer ImageId) {
+        WorksChapterDetailedViewingContentEntity worksChapterDetailedViewingContentEntity =
+                worksChapterDetailedViewingContentService.getImageData(WorksId, WorksChapterId, ImageId);
+        return R.ok().data("data", worksChapterDetailedViewingContentEntity);
     }
+
     @ApiOperation(value = "审核作品数据", notes = "审核作品数据")
     @ApiImplicitParams(
             {
@@ -55,8 +54,8 @@ public class WorksChapterDetailedViewingContentController {
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/list")
-    public R list(Integer page,Integer limit){
-        PageUtils pages =worksChapterDetailedViewingContentService .queryPage(page,limit);
+    public R list(Integer page, Integer limit) {
+        PageUtils pages = worksChapterDetailedViewingContentService.queryPage(page, limit);
 
         return R.ok().data("page", pages);
     }

@@ -30,5 +30,7 @@ public interface CartoonWorksDetailsService extends IService<CartoonWorksDetails
     void review(ReviewCartoonWorksTo reviewCartoonWorksTo);
 
     void getChapterWorksZip(Integer worksChapterId, String zipFilePath);
+
+    ReviewCartoonWorksTo getChapterInfo(Integer worksId, Integer cartoonChapterId);
 }
 

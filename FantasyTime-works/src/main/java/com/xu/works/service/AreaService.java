@@ -3,6 +3,7 @@ package com.xu.works.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.AreaEntity;
+import com.xu.works.vo.DownListVo;
 
 import java.util.List;
 import java.util.Map;
@@ -19,5 +20,7 @@ public interface AreaService extends IService<AreaEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     List<AreaEntity> getarea();
+
+    List<DownListVo> getList();
 }
 

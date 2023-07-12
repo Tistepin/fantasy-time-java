@@ -3,14 +3,15 @@ package com.xu.works.controller;
 import com.rabbitmq.client.Channel;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.R;
+import com.xu.works.entity.WorksEntity;
 import com.xu.works.service.WorksService;
 import com.xu.works.to.ReviewWorksTo;
 import com.xu.works.to.SaveBookToShelfTo;
 import com.xu.works.to.WorksTo;
+import com.xu.works.vo.DownListVo;
 import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 import io.swagger.annotations.*;
-import org.apache.http.HttpRequest;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class WorksController {
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getPopularSerial")
-    public R getPopularSerial( Integer area, Integer worksType) {
+    public R getPopularSerial(Integer area, Integer worksType) {
         List<WorksVo> worksEntities = worksService.getPopularSerial(area, worksType);
         return R.ok().data("data", worksEntities);
     }
@@ -155,15 +156,19 @@ public class WorksController {
     @ApiOperation(value = "排行榜 前100本", notes = "今日排行榜 前100本")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "worksType", value = "作品类型", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
+                    @ApiImplicitParam(name = "worksType", value = "作品类型", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "page", value = "显示页数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+                    @ApiImplicitParam(name = "limit", value = "每页条数", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true)
             }
     )
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/getDailyLeaderboard")
-    public R getLeaderboard(@RequestParam Integer worksType) {
-        Map<String, List<WorksVo>> worksEntities = worksService.getLeaderboard(worksType);
+    public R getLeaderboard(@RequestParam Integer worksType,
+                            @RequestParam Integer page,
+                            @RequestParam Integer limit) {
+        Map<String, Object> worksEntities = worksService.getLeaderboard(worksType,page ,limit);
         return R.ok().data("data", worksEntities);
     }
 
@@ -408,12 +413,11 @@ public class WorksController {
     }
 
     /**
+     * @return com.xu.common.utils.R
      * @Description 审核作品数据
      * @Author F3863479
      * @Date 2023/2/1 下午 01:18
      * @Params [page, limit]
-     * @return com.xu.common.utils.R
-     *
      */
     @ApiOperation(value = "审核作品数据", notes = "审核作品数据")
     @ApiImplicitParams(
@@ -428,18 +432,17 @@ public class WorksController {
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
     @GetMapping("/list")
-    public R list(Integer page,Integer limit,Integer reviewStatus,Integer deleteStatus){
-        PageUtils pages =worksService.queryPage(page,limit,reviewStatus,deleteStatus);
+    public R list(Integer page, Integer limit, Integer reviewStatus, Integer deleteStatus) {
+        PageUtils pages = worksService.queryPage(page, limit, reviewStatus, deleteStatus);
         return R.ok().data("page", pages);
     }
 
     /**
+     * @return com.xu.common.utils.R
      * @Description 作品审核
      * @Author F3863479
      * @Date 2023/2/1 下午 01:18
      * @Params [worksTo, request]
-     * @return com.xu.common.utils.R
-     *
      */
     @ApiOperation(value = "作品审核", notes = "作品审核")
     @ApiImplicitParam(name = "reviewWorksTo", value = "作品审核 ", paramType = "body", required = true, dataType = "ReviewWorksTo")
@@ -449,7 +452,7 @@ public class WorksController {
     @PostMapping("/review")
     public R review(@RequestBody ReviewWorksTo reviewWorksTo, HttpServletRequest httpRequest) {
         try {
-            worksService.review(reviewWorksTo,httpRequest);
+            worksService.review(reviewWorksTo, httpRequest);
         } catch (Exception e) {
             return R.error();
         }
@@ -458,12 +461,11 @@ public class WorksController {
 
 
     /**
+     * @return com.xu.common.utils.R
      * @Description es作品更新
-     * @Author F3863479
+     * @AuthgetWorksWatchHistoryor F3863479
      * @Date 2023/2/1 下午 01:18
      * @Params [worksTo, request]
-     * @return com.xu.common.utils.R
-     *
      */
     @ApiOperation(value = "es作品更新", notes = "es作品更新")
 //    @ApiImplicitParam(name = "reviewWorksTo", value = "作品审核 ", paramType = "body", required = true, dataType = "ReviewWorksTo")
@@ -473,26 +475,114 @@ public class WorksController {
     @PostMapping("/UpdateWorksEs")
     public R UpdateWorksEs(@RequestParam("WorksID") Long WorksID) {
         try {
-            worksService.UpdateWorksEs(WorksID);
+            String s = worksService.UpdateWorksEs(WorksID);
+            if (s.equals("OK")) {
+
+                return R.ok().data("msg", s);
+            } else {
+
+                return R.error().data("msg", s);
+            }
         } catch (Exception e) {
             return R.error();
         }
-        return R.ok();
     }
-
 
 
     // 作品章节审核后 更新作品详细信息和书架
     @RabbitListener(queues = "works.update.queue")
-    public R WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo, Channel channel , Message message) throws IOException {
+    public void WorksInBookshelfUpdate(SaveBookToShelfTo saveBookToShelfTo, Channel channel, Message message) throws IOException {
         try {
             worksService.WorksInBookshelfUpdate(saveBookToShelfTo);
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
-        }catch (Exception e){
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
             e.fillInStackTrace();
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(),true);
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
         }
-        return R.ok();
     }
 
+    // 获取用户的上传作品的数量 包过插图 漫画 小说等
+
+    /**
+     * @return com.xu.common.utils.R
+     * @Description
+     * @Author F3863479
+     * @Date 2023/6/19 上午 10:11
+     */
+    @ApiOperation(value = "获取用户的上传作品的数量 包过插图 漫画 小说等", notes = "获取用户的上传作品的数量 包过插图 漫画 小说等")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/GetWorksCount")
+    public R GetWorksCount(HttpServletRequest request) {
+        try {
+            Integer count = worksService.GetWorksCount(request);
+            return R.ok().data("Count", count);
+        } catch (Exception e) {
+            return R.error();
+        }
+    }
+
+    /**
+     * @return com.xu.common.utils.R
+     * @Description 获取用户的收藏数量
+     * @Author F3863479
+     * @Date 2023/6/19 上午 10:11
+     */
+    @ApiOperation(value = "获取用户的收藏数量", notes = "获取用户的收藏数量")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/GetCollectCount")
+    public R GeTCollectCount(HttpServletRequest request) {
+        try {
+            Integer count = worksService.GeTCollectCount(request);
+            return R.ok().data("Count", count);
+        } catch (Exception e) {
+            return R.error();
+        }
+    }
+
+
+    /**
+     * @return com.xu.common.utils.R
+     * @Description 获取用户的作品下拉
+     * @Author F3863479
+     * @Date 2023/6/19 上午 10:11
+     */
+    @ApiOperation(value = "获取用户的作品下拉", notes = "获取用户的作品下拉")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/getWorksDownList")
+    public R GetWorksDownList(HttpServletRequest request) {
+        try {
+            List<DownListVo> list = worksService.GetWorksDownList(request);
+            return R.ok().data("list", list);
+        } catch (Exception e) {
+            return R.error();
+        }
+    }
+
+    /**
+     * @Description 获取插图集
+     * @Author F3863479
+     * @Date 2023/6/29 下午 02:05
+     * @Params [request]
+     * @return com.xu.common.utils.R
+     *
+     */
+    @ApiOperation(value = "获取插图集", notes = "获取插图集")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/getIllustration")
+    public R GetIllustration(HttpServletRequest request) {
+        try {
+            List<WorksEntity> list = worksService.GetIllustration(request);
+            return R.ok().data("list", list);
+        } catch (Exception e) {
+            return R.error();
+        }
+    }
 }

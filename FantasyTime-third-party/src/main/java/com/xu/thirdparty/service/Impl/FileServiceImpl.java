@@ -9,8 +9,7 @@ import com.xu.common.constant.ResultCode;
 import com.xu.common.utils.R;
 import com.xu.thirdparty.fegin.WorksService;
 import com.xu.thirdparty.service.FileService;
-import lombok.var;
-import org.aspectj.weaver.ast.Var;
+import com.xu.thirdparty.utils.ZipUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.List;
 
 
 /**
@@ -45,42 +45,84 @@ public class FileServiceImpl implements FileService {
         InputStream inputStream = file.getInputStream();
         // 创建传输位置
         // 创建目录
-        File file1 = new File("C:/Users/F3863479/Desktop/Test/" + worksName + "/" +worksChapterId);
+        String url = "";
+        if (worksName != null) {
+            url = "C:/Users/F3863479/Desktop/Test/" + worksName;
+        }
+        if (worksChapterId != null) {
+            url += "/" + worksChapterId;
+        }
+
+        File file1 = new File(url);
         // 创建多个目录拥有上下级关系
         boolean mkdirs = file1.mkdirs();
-        if (mkdirs){
-            // 创建输出流
-            FileOutputStream fileOutputStream = new FileOutputStream(file1 + "/" + Filename);
-            //3.读数据
-            byte[] buffer = new byte[5];
-            //记录每次读取的字节个数
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, len);
-            }
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return file1 + "\\" + Filename;
-        }else{
-            return null;
+        // 创建输出流
+        FileOutputStream fileOutputStream = new FileOutputStream(file1 + "/" + Filename);
+        //3.读数据
+        byte[] buffer = new byte[5];
+        //记录每次读取的字节个数
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            fileOutputStream.write(buffer, 0, len);
         }
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file1 + "/" + Filename;
 
     }
 
     @Override
-    public void removeFile(String url) {
-        File file1 = new File(url);
-        boolean delete = file1.delete();
+    public void removeFile(String datapath) {
+        File file = new File(datapath);
+        deleteFiles(file);
+    }
+    private static void deleteFiles(File directory) {
+       if (directory.getParent().equals("C:\\Users\\F3863479\\Desktop\\Test")){
+           directory.delete();
+       }else{
+           directory.delete();
+           deleteFiles(directory.getParentFile());
+       }
+    }
+
+
+    @Override
+    public List<String> policy4(String worksName, MultipartFile zipFile) {
+        //C:\Users\登录用户~1\AppData\Local\Temp\
+        String pathName = "C:\\Users\\F3863479\\Desktop\\Test\\" + worksName+"\\压缩包";
+        String dec = "C:\\Users\\F3863479\\Desktop\\Test\\" + worksName;
+        File file = new File(pathName);
+        //如果文件夹不存在  创建文件夹
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        //获取文件名（包括后缀）
+
+        String pname = zipFile.getOriginalFilename();
+        pathName = pathName+ "/"+ pname;
+        try {
+            File dest = new File(pathName);
+            zipFile.transferTo(dest);
+            // 获取解压出来的文件名 不带后缀
+            List<String> fileNames = ZipUtil.unZip(dest, dec, worksName);
+            //解析完成   删除本次解析中生成的文件  删除此目录下的所有文件
+            //ZipUtil.deleteFile(dec);
+
+            return fileNames;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -94,21 +136,21 @@ public class FileServiceImpl implements FileService {
     @Async
     public void GetWorkContent(Integer worksId, Integer worksChapterId, Integer imageId, HttpServletResponse response, Integer imageDefaultStatus) {
         // 0 不是 1 是
-        String Url=null;
-        if (imageDefaultStatus==1){
+        String Url = null;
+        if (imageDefaultStatus == 1) {
             R imageData = WorksService.getWorksDefaultImage(worksId.longValue());
             if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
                 JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
                 Url = jsonObject.get("worksDefaultImage").toString();
-            }else{
+            } else {
                 throw new RuntimeException("没有该图片");
             }
-        }else{
+        } else {
             R imageData = WorksService.getImageData(worksId, worksChapterId, imageId);
             if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
                 JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
                 Url = jsonObject.get("worksChapterLocation").toString();
-            }else{
+            } else {
 
                 throw new RuntimeException("没有该图片");
             }

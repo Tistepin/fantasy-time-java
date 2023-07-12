@@ -3,6 +3,7 @@ package com.xu.works.controller;
 import com.xu.works.entity.UserEntity;
 import com.xu.works.to.UserTo;
 import com.xu.works.to.userUpdateTo;
+import com.xu.works.vo.UpdateUserPwd;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +68,23 @@ public class UserController {
     @PostMapping("/updateUser")
     public R updateUser(@RequestBody userUpdateTo userUpdateTo) {
         userService.updateUser(userUpdateTo);
+        return R.ok();
+    }
+
+    // 3.修改用户密码
+    @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
+    @ApiImplicitParam(name = "userUpdateTo", value = "更新用户 ", paramType = "body",
+            required = true, dataType = "userUpdateTo")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @PostMapping("/updateUserPwd")
+    public R updateUserPwd(@RequestBody UpdateUserPwd updateUserPwd) {
+        try {
+            userService.updateUserPwd(updateUserPwd);
+        } catch (Exception e) {
+            return R.error().message(e.getMessage());
+        }
         return R.ok();
     }
 }

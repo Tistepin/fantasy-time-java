@@ -5,6 +5,7 @@ import com.xu.common.utils.PageUtils;
 import com.xu.works.entity.UserEntity;
 import com.xu.works.to.UserTo;
 import com.xu.works.to.userUpdateTo;
+import com.xu.works.vo.UpdateUserPwd;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -27,5 +28,7 @@ public interface UserService extends IService<UserEntity> {
     UserEntity getUserEntity(HttpServletRequest request);
 
     void updateUser(userUpdateTo userUpdateTo);
+
+    void updateUserPwd(UpdateUserPwd updateUserPwd) throws Exception;
 }
 

@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author 徐國紀
@@ -27,4 +28,6 @@ public interface FileService   {
     String upload(String worksName, String worksChapterId, MultipartFile file) throws IOException;
 
     void removeFile(String url);
+
+    List<String> policy4(String worksName , MultipartFile file);
 }

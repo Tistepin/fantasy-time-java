@@ -10,6 +10,7 @@ import com.xu.works.constant.AreaEnum;
 import com.xu.works.dao.AreaDao;
 import com.xu.works.entity.AreaEntity;
 import com.xu.works.service.AreaService;
+import com.xu.works.vo.DownListVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -53,6 +54,11 @@ public class AreaServiceImpl extends ServiceImpl<AreaDao, AreaEntity> implements
             GetAreaOps.set(s);
         }
         return areaEntities;
+    }
+
+    @Override
+    public List<DownListVo> getList() {
+        return this.baseMapper.getList();
     }
 
 }

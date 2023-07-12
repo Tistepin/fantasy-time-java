@@ -22,15 +22,15 @@ public  class WorksEnum{
           */
          works_popularity_today_mh(1, "works_popularity_today_mh"),
          /**
-          * 三日内人气 一天一更新
+          * 三日内人气 一天一更新 第三天删除
           */
          works_popularity_three_days_mh(2, "works_popularity_three_days_mh"),
          /**
-          * 本周内人气 一天一更新
+          * 本周内人气 一天一更新  每周1 0点删除
           */
          works_popularity_thisWeek_mh(3, "works_popularity_thisWeek_mh"),
          /**
-          * 本月内人气 一天一更新
+          * 本月内人气 一天一更新 每月最第一天 0点删除
           */
          works_popularity_thisMonth_mh(4, "works_popularity_thisMonth_mh");
 

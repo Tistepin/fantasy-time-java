@@ -24,6 +24,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching // 开启spring-cache缓存
 @EnableFeignClients("com.xu.works.feign")
 @EnableScheduling//开启定时任务
+
+//@EnableAutoDataSourceProxy//seata启用自动数据源代理
 public class FantasyTimeWorksApplication {
     public static void main(String[] args) {
         SpringApplication.run(FantasyTimeWorksApplication.class, args);

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.Time;
 
 /**
  * @Description:
@@ -85,5 +86,26 @@ public class SearchController {
             return R.error().code(BizCodeEnume.PRODUCT_UP_EXCEPTION.getCode()).message(BizCodeEnume.PRODUCT_UP_EXCEPTION.getMsg());
         }
 
+    }
+
+    @GetMapping("getEsWorksUp")
+    public R GetEsWorks(@RequestParam Long WorksId) {
+        WorksEsModel worksEsModel=mallSearchService.GetEsWorks(WorksId);
+        if (worksEsModel!=null){
+
+            return R.ok().data("data",worksEsModel);
+        }
+        return R.error();
+    }
+
+    // 删除es数据
+    @DeleteMapping("DeleteWorksUpErrorData")
+    public R DeleteWorksUpErrorData(@RequestParam Long WorksId) {
+        Boolean a=mallSearchService.DeleteWorksUpErrorData(WorksId);
+        if (a){
+
+            return R.ok();
+        }
+        return R.error();
     }
 }

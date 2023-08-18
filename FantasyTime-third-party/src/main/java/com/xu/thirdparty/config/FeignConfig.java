@@ -1,9 +1,12 @@
 package com.xu.thirdparty.config;
 
 
+import feign.Request;
 import feign.Request.Options;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description:
@@ -18,7 +21,9 @@ public class FeignConfig {
      * 超时时间配置
      */
     @Bean
-    public Options options(){
-        return new Options(5000,4000);
+    public Request.Options options(){
+        return new Request.Options(600000, TimeUnit.MILLISECONDS,
+                600000,TimeUnit.MILLISECONDS,
+                true);
     }
 }

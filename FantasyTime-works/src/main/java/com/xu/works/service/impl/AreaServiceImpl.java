@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.Query;
+import com.xu.common.utils.R;
 import com.xu.works.constant.AreaEnum;
 import com.xu.works.dao.AreaDao;
 import com.xu.works.entity.AreaEntity;
+import com.xu.works.feign.SearchFeignService;
 import com.xu.works.service.AreaService;
 import com.xu.works.vo.DownListVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +62,4 @@ public class AreaServiceImpl extends ServiceImpl<AreaDao, AreaEntity> implements
     public List<DownListVo> getList() {
         return this.baseMapper.getList();
     }
-
 }

@@ -4,6 +4,8 @@ import feign.Request;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @Description:
  * @author: 徐國紀
@@ -18,6 +20,8 @@ public class FeignConfig {
      */
     @Bean
     public Request.Options options(){
-        return new Request.Options(5000,4000);
+        return new Request.Options(600000, TimeUnit.MILLISECONDS,
+                600000,TimeUnit.MILLISECONDS,
+                true);
     }
 }

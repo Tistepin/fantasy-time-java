@@ -15,4 +15,8 @@ public interface MallSearchService {
     SearchResult search(SearchParam searchParam);
 
     void UpdateEs(WorksEsModel worksEsModels) throws IOException;
+
+    WorksEsModel GetEsWorks(Long worksId);
+
+    Boolean DeleteWorksUpErrorData(Long worksId);
 }

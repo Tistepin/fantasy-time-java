@@ -18,9 +18,7 @@ import java.io.IOException;
  * @createTime: 2023-01-2023/1/4-上午 09:55
  */
 @Component
-public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
-
-
+public class  UnauthorizedEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         ResponseUtil.out(httpServletResponse, R.error());

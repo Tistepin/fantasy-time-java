@@ -6,7 +6,6 @@ import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.WildcardQuery;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
@@ -20,6 +19,7 @@ import com.xu.search.service.MallSearchService;
 import com.xu.search.vo.SearchParam;
 import com.xu.search.vo.SearchResult;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.RequestOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -70,7 +70,7 @@ public class MallSearchServiceImpl implements MallSearchService {
 
         SearchResult searchResult = new SearchResult();
         // 构建查询条件
-        SearchRequest builder=buildSearchRequrest(searchParam);
+        SearchRequest builder = buildSearchRequrest(searchParam);
         SearchResponse<HashMap> search;
         try {
             search = client.search(builder, HashMap.class);
@@ -90,7 +90,59 @@ public class MallSearchServiceImpl implements MallSearchService {
         UpdateResponse<Object> update = client.update(build, Object.class);
     }
 
+    @Override
+    public WorksEsModel GetEsWorks(Long worksId) {
+        // 构建请求
+        SearchRequest.Builder builder = new SearchRequest.Builder().index(EsConstant.WORKS_INDEX);
+        WorksEsModel worksEsModel = new WorksEsModel();
+        if (worksId != null) {
+            BoolQuery.Builder BoolQueryBuilder = new BoolQuery.Builder();
+            BoolQueryBuilder.must(
+                    m -> m.match(match -> match.field("worksId").query(worksId))
+            );
 
+            builder.query(new Query.Builder().bool(BoolQueryBuilder.build()).build());
+            try {
+                // 查询数据
+                SearchResponse<HashMap> search = client.search(builder.build(), HashMap.class);
+                HitsMetadata<HashMap> hits = search.hits();
+                /**
+                 * 1查询到的所有作品信息
+                 */
+                if (!hits.hits().isEmpty()) {
+                    for (Hit<HashMap> hit : hits.hits()) {
+                        if (Objects.equals(hit.score(), hits.maxScore())) {
+                            worksEsModel = JSON.parseObject(JSON.toJSONString(hit.source()), WorksEsModel.class);
+
+                        }
+                    }
+                }
+
+                return worksEsModel;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean DeleteWorksUpErrorData(Long worksId) {
+        //3. 根据id删除文档
+        try {
+            client.delete(del->
+                 del.index(EsConstant.WORKS_INDEX)
+                         .id(worksId.toString())
+             );
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    // 构建实体类
     private SearchResult buildSearchResult(SearchResponse<HashMap> search, SearchParam searchParam) {
         SearchResult searchResult = new SearchResult();
         HitsMetadata<HashMap> hits = search.hits();
@@ -100,7 +152,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         if (!hits.hits().isEmpty()) {
             List<WorksEsModel> skuEsModels = new ArrayList<>();
             for (Hit<HashMap> hit : hits.hits()) {
-                if (Objects.equals(hit.score(), hits.maxScore())){
+                if (Objects.equals(hit.score(), hits.maxScore())) {
                     WorksEsModel worksEsModel = JSON.parseObject(JSON.toJSONString(hit.source()), WorksEsModel.class);
                     skuEsModels.add(worksEsModel);
                 }
@@ -119,14 +171,15 @@ public class MallSearchServiceImpl implements MallSearchService {
          */
         long TotalPages = totle == 0 ?
                 totle : totle / searchParam.getPageSize() == 0 ?
-                ((totle / searchParam.getPageSize()) + 1 ): totle % searchParam.getPageSize()==0?
-                totle  / searchParam.getPageSize():(totle % searchParam.getPageSize())+1;
+                ((totle / searchParam.getPageSize()) + 1) : totle % searchParam.getPageSize() == 0 ?
+                totle / searchParam.getPageSize() : (totle % searchParam.getPageSize()) + 1;
         searchResult.setTotalPages((int) TotalPages);
         return searchResult;
     }
 
     /**
      * 构建es搜索请求
+     *
      * @param searchParam
      * @return
      */
@@ -147,15 +200,16 @@ public class MallSearchServiceImpl implements MallSearchService {
          * 1.2 模糊匹配  查询含有这个题材的作品 题材可能含有多个
          */
         String worksCategory = searchParam.getWorksCategory();
-        if (!StringUtils.isEmpty(worksCategory)&& !worksCategory.equals("1")) {
+        if (!StringUtils.isEmpty(worksCategory) && !worksCategory.equals("1")) {
             String[] split = worksCategory.split(",");
-            List<Query> wildcardQuerys=new ArrayList<>();
+            List<Query> wildcardQuerys = new ArrayList<>();
             for (String s : split) {
                 WildcardQuery.Builder wildcard = new WildcardQuery.Builder();
                 wildcard.field("worksCategory");
-                wildcard.value("*"+s+"*");
+                wildcard.value("*" + s + "*");
                 Query query = new Query(wildcard.build());
-                wildcardQuerys.add(query);;
+                wildcardQuerys.add(query);
+                ;
             }
 
             BoolQueryBuilder.must(wildcardQuerys);
@@ -175,7 +229,7 @@ public class MallSearchServiceImpl implements MallSearchService {
          * 1.4 精确匹配地区
          */
         Integer worksArea = searchParam.getWorksArea();
-        if (!StringUtils.isEmpty(worksArea)&&worksArea!=1) {
+        if (!StringUtils.isEmpty(worksArea) && worksArea != 1) {
             BoolQueryBuilder.must(
                     m -> m.match(match -> match.field("worksArea").query(worksArea))
             );
@@ -184,7 +238,7 @@ public class MallSearchServiceImpl implements MallSearchService {
          * 1.5 精确匹配是否已完结
          */
         Integer worksStatus = searchParam.getWorksStatus();
-        if (!StringUtils.isEmpty(worksStatus)&&worksStatus!=0) {
+        if (!StringUtils.isEmpty(worksStatus) && worksStatus != 0) {
             BoolQueryBuilder.must(
                     m -> m.match(match -> match.field("worksStatus").query(worksStatus))
             );

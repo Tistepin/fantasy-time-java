@@ -30,5 +30,7 @@ public interface UserService extends IService<UserEntity> {
     void updateUser(userUpdateTo userUpdateTo);
 
     void updateUserPwd(UpdateUserPwd updateUserPwd) throws Exception;
+
+    UserEntity GetIdUserEntity(Integer userId);
 }
 

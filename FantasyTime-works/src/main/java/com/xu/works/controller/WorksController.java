@@ -379,7 +379,7 @@ public class WorksController {
      * @Date 2023/1/10 上午 10:08
      * @Params [WorksCategory]
      */
-    @ApiOperation(value = "上传作品章节", notes = "上传作品")
+    @ApiOperation(value = "上传作品", notes = "上传作品")
     @ApiImplicitParam(name = "worksTo", value = "上传章节数据To ", paramType = "body", required = true,
             dataType = "WorksTo")
     @ApiResponses({
@@ -609,4 +609,34 @@ public class WorksController {
         R r = searchFeignService.GetEsWorks((long) 1);
         return r;
     }
+
+
+
+    /**
+     * @Description 获取指定用户的作品集
+     * @Author F3863479
+     * @Date 2023/8/23 下午 03:16
+     * @Params [UserId]
+     * @return com.xu.common.utils.R
+     *
+     */
+    @ApiOperation(value = "获取指定用户的作品集", notes = "获取指定用户的作品集")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "UserId", value = "用户ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+            }
+    )
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/GetIDTpWorks")
+    public R GetIDTpWorks(@RequestParam(value = "UserId") Integer UserId) {
+        try {
+            Map<String,List<WorksEntity>> map = worksService.GetIDTpWorks(UserId);
+            return R.ok().data("map", map);
+        } catch (Exception e) {
+            return R.error();
+        }
+    }
+
 }

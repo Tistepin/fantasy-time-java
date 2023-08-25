@@ -75,5 +75,7 @@ public interface WorksService extends IService<WorksEntity> {
     List<DownListVo> GetWorksDownList(HttpServletRequest request);
 
     List<WorksEntity> GetIllustration(HttpServletRequest request);
+
+    Map<String,List<WorksEntity>> GetIDTpWorks(Integer userId);
 }
 

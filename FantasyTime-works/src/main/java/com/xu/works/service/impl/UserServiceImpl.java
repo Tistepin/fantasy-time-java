@@ -163,4 +163,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         this.baseMapper.updateById(userEntity);
     }
 
+    @Override
+    public UserEntity GetIdUserEntity(Integer userId) {
+        return this.baseMapper.selectById(userId);
+    }
+
 }

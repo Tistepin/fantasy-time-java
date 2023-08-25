@@ -276,7 +276,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         }
 
         IPage<WorksEntity> pages = this.page(
-                new Query<WorksEntity>().getPage(params),wrapper
+                new Query<WorksEntity>().getPage(params), wrapper
         );
         List<AreaEntity> getarea = areaService.getarea();
         List<WorksEntity> collect = pages.getRecords().stream().map((item) -> {
@@ -334,7 +334,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 ArrayList<String> strings = new ArrayList<>();
                 strings.add(worksEntity.getDefaultImage());
                 cartoonWorksDetailsEntity.setWorksChapterLocations(strings);
-                    cartoonWorksDetailsService.saveUploadChapterData(cartoonWorksDetailsEntity, httpRequest);
+                cartoonWorksDetailsService.saveUploadChapterData(cartoonWorksDetailsEntity, httpRequest);
             }
         }, executor);
         CompletableFuture<Void> voidCompletableFuture3 = CompletableFuture.runAsync(() -> {
@@ -471,10 +471,10 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 // 拿取 默认数据
             }
             HashMap<String, Object> map1 = new HashMap<>();
-            map1.put("page",page);
-            map1.put("limit",limit);
-            map1.put("count",dailyLeaderboardList==null?0:dailyLeaderboardList.size());
-            map1.put("list",dailyLeaderboardList==null?null:dailyLeaderboardList.size()<=limit?dailyLeaderboardList:dailyLeaderboardList.subList((page-1)*limit, dailyLeaderboardList.size()>=page*limit?page*limit:dailyLeaderboardList.size()));
+            map1.put("page", page);
+            map1.put("limit", limit);
+            map1.put("count", dailyLeaderboardList == null ? 0 : dailyLeaderboardList.size());
+            map1.put("list", dailyLeaderboardList == null ? null : dailyLeaderboardList.size() <= limit ? dailyLeaderboardList : dailyLeaderboardList.subList((page - 1) * limit, dailyLeaderboardList.size() >= page * limit ? page * limit : dailyLeaderboardList.size()));
             map.put("dailyLeaderboard", map1);
         }, executor);
         // 三天人气前一百
@@ -492,10 +492,10 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_three_days_mh.getMsg(), s1);
             }
             HashMap<String, Object> map1 = new HashMap<>();
-            map1.put("page",page);
-            map1.put("limit",limit);
-            map1.put("count",threeDaysLeaderboardList==null?0:threeDaysLeaderboardList.size());
-            map1.put("list",threeDaysLeaderboardList.subList((page-1)*limit, threeDaysLeaderboardList.size()>=page*limit?page*limit:threeDaysLeaderboardList.size()));
+            map1.put("page", page);
+            map1.put("limit", limit);
+            map1.put("count", threeDaysLeaderboardList == null ? 0 : threeDaysLeaderboardList.size());
+            map1.put("list", threeDaysLeaderboardList.subList((page - 1) * limit, threeDaysLeaderboardList.size() >= page * limit ? page * limit : threeDaysLeaderboardList.size()));
             map.put("threeDaysLeaderboard", map1);
         }, executor);
         // 本周人气前一百
@@ -515,10 +515,10 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_thisWeek_mh.getMsg(), s1);
             }
             HashMap<String, Object> map1 = new HashMap<>();
-            map1.put("page",page);
-            map1.put("limit",limit);
-            map1.put("count",thisWeekLeaderboardLust.size());
-            map1.put("list",thisWeekLeaderboardLust.subList((page-1)*limit, thisWeekLeaderboardLust.size()>=page*limit?page*limit:thisWeekLeaderboardLust.size()));
+            map1.put("page", page);
+            map1.put("limit", limit);
+            map1.put("count", thisWeekLeaderboardLust.size());
+            map1.put("list", thisWeekLeaderboardLust.subList((page - 1) * limit, thisWeekLeaderboardLust.size() >= page * limit ? page * limit : thisWeekLeaderboardLust.size()));
             map.put("thisWeekLeaderboard", map1);
         }, executor);
         // 今月人气前一百
@@ -537,17 +537,17 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                 String s1 = JSONObject.toJSON(thisMonthDaysLeaderboardList).toString();
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_thisMonth_mh.getMsg(),  mapper.writeValueAsString(thisMonthDaysLeaderboardList));
+                    stringRedisTemplate.opsForValue().set(WorksEnum.Works_mh_Enum.works_popularity_thisMonth_mh.getMsg(), mapper.writeValueAsString(thisMonthDaysLeaderboardList));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
             }
 
             HashMap<String, Object> map1 = new HashMap<>();
-            map1.put("page",page);
-            map1.put("limit",limit);
-            map1.put("count",thisMonthDaysLeaderboardList.size());
-            map1.put("list",thisMonthDaysLeaderboardList.subList((page-1)*limit, thisMonthDaysLeaderboardList.size()>=page*limit?page*limit:thisMonthDaysLeaderboardList.size()));
+            map1.put("page", page);
+            map1.put("limit", limit);
+            map1.put("count", thisMonthDaysLeaderboardList.size());
+            map1.put("list", thisMonthDaysLeaderboardList.subList((page - 1) * limit, thisMonthDaysLeaderboardList.size() >= page * limit ? page * limit : thisMonthDaysLeaderboardList.size()));
             map.put("thisMonthDaysLeaderboard", map1);
         }, executor);
         try {
@@ -618,9 +618,9 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         this.baseMapper.updateById(worksEntity);
         worksBookshelfService.update(
                 new UpdateWrapper<WorksBookshelfEntity>()
-                .eq("works_id",worksId)
-                .set("works_renew",WorksRenew)
-                .set("works_update_time",new Date(System.currentTimeMillis()))
+                        .eq("works_id", worksId)
+                        .set("works_renew", WorksRenew)
+                        .set("works_update_time", new Date(System.currentTimeMillis()))
         );
         String s = UpdateWorksEs(worksId);
         if (!s.equals("OK")) {
@@ -635,7 +635,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         if (r.getCode() == 20000) {
             return "OK";
         } else {
-           return "es修改失败";
+            return "es修改失败";
         }
     }
 
@@ -644,7 +644,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         // 获取作品数量
         UserEntity userEntity = userService.getUserEntity(request);
         return this.baseMapper.selectCount(
-                new QueryWrapper<WorksEntity>().eq("creator",userEntity.getId()));
+                new QueryWrapper<WorksEntity>().eq("creator", userEntity.getId()));
     }
 
     @Override
@@ -660,17 +660,38 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
 
         // 获取作品数量
         UserEntity userEntity = userService.getUserEntity(request);
-        return  this.baseMapper.GetWorksDownList(userEntity.getId());
+        return this.baseMapper.GetWorksDownList(userEntity.getId());
     }
 
     /* 获取插图集 */
     @Override
     public List<WorksEntity> GetIllustration(HttpServletRequest request) {
-        return this.baseMapper.selectList(new QueryWrapper<WorksEntity>().eq("works_type", 3));
+        return this.baseMapper.selectList(new QueryWrapper<WorksEntity>().eq("works_type", 3).eq("review_status",1));
+    }
+
+    @Override
+    public Map<String, List<WorksEntity>> GetIDTpWorks(Integer userId) {
+        List<WorksEntity> worksEntities = this.baseMapper.selectList(new QueryWrapper<WorksEntity>().eq("creator", userId));
+        HashMap<String, List<WorksEntity>> maps = new HashMap<>();
+        List<WorksEntity> worksToschatu = new ArrayList<>();
+        List<WorksEntity> worksTosmanhua = new ArrayList<>();
+        worksEntities.forEach(
+                item -> {
+                    if (item.getWorksType()==1){
+                        worksTosmanhua.add(item);
+                    }
+                    if (item.getWorksType()==3){
+                        worksToschatu.add(item);
+                    }
+                }
+        );
+        maps.put("chatu", worksToschatu);
+        maps.put("works", worksTosmanhua);
+        return maps;
     }
 
     // 獲取es需要的WorksEsModel
-    private WorksEsModel GetWorksEsModel(Long worksID){
+    private WorksEsModel GetWorksEsModel(Long worksID) {
         // 查到作品
         WorksEntity worksEntity = this.baseMapper.selectOne(new QueryWrapper<WorksEntity>().eq("works_id", worksID));
         // new esModel

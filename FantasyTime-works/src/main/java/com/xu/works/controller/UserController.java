@@ -87,4 +87,22 @@ public class UserController {
         }
         return R.ok();
     }
+
+
+    // 3.根据id 获取用户信息
+    @ApiOperation(value = "获取用户实体类", notes = "获取用户实体类")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "UserId", value = "用户ID", paramType = "query", dataType = "Integer", defaultValue = "1", allowEmptyValue = true),
+            }
+    )
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @GetMapping("/GetIdUserEntity")
+    public R GetIdUserEntity(@RequestParam(value = "UserId") Integer UserId) {
+        UserEntity userEntity=userService.GetIdUserEntity(UserId);
+        return R.ok().data("data",userEntity);
+    }
+
 }

@@ -1,3 +1,4 @@
+drop table ft_area;
 create table fantasytime.ft_area
 (
     id            bigint auto_increment comment 'id'
@@ -13,7 +14,7 @@ create table fantasytime.ft_cartoon_works_details
 (
     id                   bigint auto_increment comment 'id'
         primary key,
-    works_id             bigint                             null comment '作品id',
+    works_id             char(20)                           null comment '作品id',
     cartoon_chapter_id   char(20)                           null comment '漫画章节ID 第几话',
     cartoon_chapter_name varchar(64)                        null comment '漫画章节名字',
     cartoon_pages        char(20)                           null comment '漫画页数',
@@ -22,7 +23,7 @@ create table fantasytime.ft_cartoon_works_details
     delete_status        bigint   default 1                 not null comment '逻辑删除状态 0-已删除 1-未删除'
 )
     comment '漫画作品章节数量';
-
+drop table fantasytime.ft_category;
 create table fantasytime.ft_category
 (
     cat_id        bigint auto_increment comment '分类id'
@@ -39,7 +40,7 @@ create table fantasytime.ft_novel_works_details
 (
     id                 bigint auto_increment comment 'id'
         primary key,
-    works_id           bigint                             null comment '作品id',
+    works_id           char(20)                           null comment '作品id',
     novel_chapter_id   char(20)                           null comment '小说章节ID 第几章',
     novel_chapter_name varchar(64)                        null comment '小说章节名字',
     novel_pages        char(20)                           null comment '漫画页数',
@@ -53,7 +54,7 @@ create table fantasytime.ft_popularity
 (
     id                          bigint auto_increment comment 'id'
         primary key,
-    works_id                    bigint                             null comment '作品id',
+    works_id                    char(20)                           null comment '作品id',
     name                        char(50)                           null comment '作品名称',
     works_type                  tinyint                            null comment '作品分类 1-漫画 2-小说',
     works_status                tinyint                            null comment '作品状态 1-更新中 2-完结',
@@ -91,7 +92,7 @@ create table fantasytime.ft_roles
         unique (role_name, role)
 )
     comment '角色信息表';
-
+drop table fantasytime.ft_user;
 create table fantasytime.ft_user
 (
     id            bigint auto_increment comment 'id'
@@ -110,15 +111,16 @@ create table fantasytime.ft_user
     source_type   tinyint                            null comment '用户来源',
     status        tinyint                            null comment '启用状态',
     create_time   datetime default CURRENT_TIMESTAMP null comment '注册时间',
-    edit_time     datetime                           null comment '修改时间',
+    edit_time     datetime default CURRENT_TIMESTAMP null comment '修改时间',
     delete_status bigint   default 1                 not null comment '逻辑删除状态 0-已删除 1-未删除',
-    constraint email
-        unique (email),
     constraint phone
-        unique (phone)
+        unique (phone),
+    constraint email
+        unique (email)
 )
     comment '用户信息表';
 
+drop table fantasytime.ft_works;
 create table fantasytime.ft_works
 (
     id                bigint auto_increment comment 'id'
@@ -144,23 +146,27 @@ create table fantasytime.ft_works
         unique (works_name)
 )
     comment '作品信息';
-
-create table fantasytime.ft_works_chapter_detailed_viewing_content
+drop table fantasytime.ft_works_watch_history;
+create table fantasytime.ft_works_watch_history
 (
-    id                     bigint auto_increment comment 'id'
+    id                                  bigint auto_increment comment 'id'
         primary key,
-    works_chapter_id       bigint                             not null comment '章节ID',
-    user_id                bigint                             not null comment '用户ID',
-    works_id               bigint                             not null comment '作品id',
-    image_id               bigint                             null comment '该画画作品的该章节的第几个图片',
-    review_status          bigint   default 1                 not null comment '审核状态 0-审核中 1-审核成功 2-审核失败',
-    delete_status          bigint   default 1                 not null comment '逻辑删除状态 0-删除 1-存在',
-    create_time            datetime default CURRENT_TIMESTAMP null comment '注册时间',
-    edit_time              datetime                           null comment '修改时间',
-    works_chapter_Location varchar(128)                       not null comment '章节数据存储位置'
+    user_id                             bigint                             not null comment '用户ID',
+    works_id                            bigint                             not null comment '作品id',
+    works_name                          varchar(64)                        null comment '作品名',
+    default_image                       varchar(128)                       null comment '作品默认展示图片',
+    works_history_viewing_chapter       bigint                             null comment '用户观看到第几章',
+    works_history_viewing_chapter_id    bigint                             null comment '用户观看到第几章的ID',
+    works_history_viewing_chapter_image bigint                             null comment '用户观看到第几章的的第几张图片',
+    works_type                          tinyint                            null comment '作品分类 1-漫画 2-小说',
+    works_status                        tinyint                            null comment '作品状态 1-更新中 2-完结',
+    delete_status                       bigint   default 1                 not null comment '逻辑删除状态 0-删除 1-存在',
+    create_time                         datetime default CURRENT_TIMESTAMP null comment '注册时间',
+    edit_time                           datetime default CURRENT_TIMESTAMP null comment '修改时间'
 )
-    comment '作品章节详细观看内容 例如小说第几章位置,漫画第一话的第一张图';
+    comment '观看历史记录';
 
+drop table fantasytime.ft_works_upload;
 create table fantasytime.ft_works_upload
 (
     id            bigint auto_increment comment 'id'
@@ -174,20 +180,63 @@ create table fantasytime.ft_works_upload
 )
     comment '作品上传信息';
 
-create table fantasytime.ft_works_watch_history
+
+drop table fantasytime.ft_works_chapter_detailed_viewing_content;
+create table fantasytime.ft_works_chapter_detailed_viewing_content
 (
-    id                            bigint auto_increment comment 'id'
+    id                     bigint auto_increment comment 'id'
         primary key,
-    user_id                       bigint                             not null comment '用户ID',
-    works_id                      bigint                             not null comment '作品id',
-    works_name                    varchar(64)                        null comment '作品名',
-    default_image                 varchar(64)                        null comment '作品默认展示图片',
-    works_history_viewing_chapter bigint                             null comment '用户观看到第几章',
-    works_type                    tinyint                            null comment '作品分类 1-漫画 2-小说',
-    works_status                  tinyint                            null comment '作品状态 1-更新中 2-完结',
-    delete_status                 bigint   default 1                 not null comment '逻辑删除状态 0-删除 1-存在',
-    create_time                   datetime default CURRENT_TIMESTAMP null comment '注册时间',
-    edit_time                     datetime default CURRENT_TIMESTAMP null comment '修改时间'
+    works_chapter_id       bigint                             not null comment '章节ID',
+    user_id                bigint                             not null comment '用户ID',
+    works_id               bigint                             not null comment '作品id',
+    works_chapter_Location varchar(64)                        not null comment '章节数据存储位置',
+    review_status          bigint   default 1                 not null comment '审核状态 0-审核中 1-审核成功 2-审核失败',
+    delete_status          bigint   default 1                 not null comment '逻辑删除状态 0-删除 1-存在',
+    create_time            datetime default CURRENT_TIMESTAMP null comment '注册时间',
+    edit_time              datetime                           null comment '修改时间'
 )
-    comment '观看历史记录';
+    comment '作品章节详细观看内容 例如小说第几章位置,漫画第一话的第一张图';
+
+/**
+    图片服务请求路径存储
+ */
+drop table fantasytime.ft_works_default_image;
+create table fantasytime.ft_works_default_image
+(
+    id                  bigint auto_increment comment 'id'
+        primary key,
+    works_id            bigint                             not null comment '作品id',
+    works_default_image varchar(128)                       not null comment '图片服务请求数据位置',
+    review_status       bigint   default 1                 not null comment '审核状态 0-审核中 1-审核成功 2-审核失败',
+    delete_status       bigint   default 1                 not null comment '逻辑删除状态 0-删除 1-存在',
+    create_time         datetime default CURRENT_TIMESTAMP null comment '注册时间',
+    edit_time           datetime                           null comment '修改时间'
+)
+    comment '作品封面图片服务请求路径存储';
+
+
+
+alter table ft_user
+    alter column edit_time set default CURRENT_TIMESTAMP;
+
+
+drop table fantasytime.ft_works_bookshelf;
+create table fantasytime.ft_works_bookshelf
+(
+    id                bigint auto_increment comment 'id'
+        primary key,
+    user_id           bigint                             not null comment '用户ID',
+    works_id          bigint                             not null comment '作品id',
+    works_name        varchar(64)                        null comment '作品名',
+    default_image     varchar(128)                       null comment '作品默认展示图片',
+    works_renew       varchar(64)                        null comment '作品更新至多少',
+    works_type        bigint                             null comment '作品类型 1-漫画 2-小说',
+    works_creator     varchar(64)                        null comment '作品创作者',
+    works_update_time datetime                           null comment '作品更新时间',
+    delete_status     bigint   default 1                 not null comment '逻辑删除状态 0-删除 1-存在',
+    create_time       datetime default CURRENT_TIMESTAMP null comment '注册时间',
+    edit_time         datetime                           null comment '修改时间'
+)
+    comment '书架';
+
 

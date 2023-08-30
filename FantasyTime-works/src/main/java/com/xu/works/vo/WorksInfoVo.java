@@ -78,12 +78,18 @@ public class WorksInfoVo {
      */
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date editTime;
+    /**
+     * 修改时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private String creatorName;
 
     @Override
     public String toString() {
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-DD");
         return "WorksInfoVo{" +
-                "id=" + worksId +
+                "worksId=" + worksId +
                 ", worksName='" + worksName + '\'' +
                 ", defaultImage='" + defaultImage + '\'' +
                 ", creator='" + creator + '\'' +
@@ -92,12 +98,13 @@ public class WorksInfoVo {
                 ", worksArea='" + worksArea + '\'' +
                 ", worksType=" + worksType +
                 ", worksScore=" + worksScore +
-                ", worksRenew='" + worksRenew + '\'' +
+                ", worksRenew=" + worksRenew +
                 ", worksPopularity=" + worksPopularity +
                 ", worksDescribe='" + worksDescribe + '\'' +
                 ", worksCategory='" + worksCategory + '\'' +
                 ", worksStatus=" + worksStatus +
                 ", editTime=" + simpleDateFormat.format(editTime) +
+                ", creatorName=" + creatorName +
                 '}';
     }
 }

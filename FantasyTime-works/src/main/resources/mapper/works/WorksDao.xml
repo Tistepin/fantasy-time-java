@@ -158,6 +158,7 @@
                works_name,
                default_image,
                creator,
+               GET_USER_NICKNAME(creator) creator_name,
                works_creator,
                date_format(works_create_time, '%Y') works_create_time,
                GET_AREA_NAME(works_area)            works_area,

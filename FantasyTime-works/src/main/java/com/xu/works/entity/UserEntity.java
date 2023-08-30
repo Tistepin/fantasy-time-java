@@ -115,5 +115,17 @@ public class UserEntity implements Serializable {
 	 * 逻辑删除状态 0-已删除 1-未删除
 	 */
 	private Long deleteStatus;
+	/**
+	 * 粉丝
+	 */
+	private Integer fans;
+	/**
+	 * 关注人数
+	 */
+	private Integer care;
+	/**
+	 * 获得的点赞数量
+	 */
+	private Integer likes;
 
 }

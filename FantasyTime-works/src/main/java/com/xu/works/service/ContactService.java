@@ -22,5 +22,7 @@ public interface ContactService extends IService<ContactEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     ArrayList<HashMap<String, Object>> GetContactState(HttpServletRequest request);
+
+    List<ContactEntity> GetCheckContact(HttpServletRequest request);
 }
 

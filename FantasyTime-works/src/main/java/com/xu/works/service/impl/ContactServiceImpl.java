@@ -75,6 +75,22 @@ public class ContactServiceImpl extends ServiceImpl<ContactDao, ContactEntity> i
         return hashMaps;
     }
 
+    /**
+     * @Description 查询是否关注
+     * @Author F3863479
+     * @Date 2023/8/29 下午 04:37
+     * @Params [request]
+     * @return java.util.List<com.xu.works.entity.ContactEntity>
+     *
+     */
+    @Override
+    public List<ContactEntity> GetCheckContact(HttpServletRequest request) {
+        // 获取关系列表
+        UserEntity userEntity = userService.getUserEntity(request);
+        List<ContactEntity> contactEntityList = this.baseMapper.selectList(new QueryWrapper<ContactEntity>().eq("owner_id", userEntity.getId()));
+        return contactEntityList;
+    }
+
     public static String httpGet(String url) {
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.exchange(url, HttpMethod.GET, null, String.class).getBody();

@@ -152,6 +152,9 @@ public class WorksWatchHistoryServiceImpl extends ServiceImpl<WorksWatchHistoryD
         WorksWatchHistoryEntity worksWatchHistoryEntity =
                 this.baseMapper.selectOne(new QueryWrapper<WorksWatchHistoryEntity>().eq("works_id", worksId).eq("user_id", UserId));
         WorksWatchHistoryVo worksWatchHistoryVo=new WorksWatchHistoryVo();
+        if (worksWatchHistoryEntity==null){
+            return worksWatchHistoryVo;
+        }
         BeanUtils.copyProperties(worksWatchHistoryEntity,worksWatchHistoryVo);
         // 获取页数
         String cartoonPages = cartoonWorksDetailsService.getById(worksWatchHistoryVo.getWorksHistoryViewingChapterId()).getCartoonPages();

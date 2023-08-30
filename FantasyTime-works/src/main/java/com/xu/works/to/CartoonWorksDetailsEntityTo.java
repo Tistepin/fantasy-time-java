@@ -12,7 +12,6 @@ import java.util.List;
  * @createTime: 2023-01-2023/1/10-下午 01:37
  */
 @Data
-
 public class CartoonWorksDetailsEntityTo {
     /**
      * 作品id

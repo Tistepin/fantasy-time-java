@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import com.xu.common.constant.systemEnum;
 import com.xu.search.constant.EsConstant;
 import org.elasticsearch.client.RequestOptions;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +32,7 @@ public class FantasyTimeSearchTest {
     @Test
     public void Test1() throws IOException {
         HashMap<String, String> map = new HashMap<>();
-        map.put("defaultImage","http://10.161.139.216/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=1");
+        map.put("defaultImage","http://"+ systemEnum.USERIP.getMsg() +"/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=1");
         UpdateRequest.Builder<Object, Object> defaultImage = new UpdateRequest.Builder<>().index(EsConstant.WORKS_INDEX);
         UpdateRequest<Object, Object> build = defaultImage.id(String.valueOf(1))
                 .doc(map)

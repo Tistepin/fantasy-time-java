@@ -1,5 +1,6 @@
 package com.xu.works;
 
+import com.xu.common.constant.systemEnum;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +10,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Map;
 
 /**
  * @Description:
@@ -27,7 +32,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@EnableAutoDataSourceProxy//seata启用自动数据源代理
 public class FantasyTimeWorksApplication {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnknownHostException {
         SpringApplication.run(FantasyTimeWorksApplication.class, args);
+
     }
+
 }

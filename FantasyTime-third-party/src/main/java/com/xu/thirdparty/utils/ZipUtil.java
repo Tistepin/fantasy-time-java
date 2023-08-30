@@ -1,6 +1,8 @@
 package com.xu.thirdparty.utils;
 
 
+import com.xu.common.constant.systemEnum;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class ZipUtil {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
                 //添加进filesName
                 // C:\Users\F3863479\Desktop\Test\刃牙外传 盖亚与西科尔斯基 ~有时候是野村 虽为二人的三人生活~\1/1.jpg
-                filesName.add("C:\\Users\\F3863479\\Desktop\\Test\\"+WorksName+"\\"+entry.getName());
+                filesName.add("C:\\Users\\"+systemEnum.USERNAME.getMsg()+"\\Desktop\\Test\\"+WorksName+"\\"+entry.getName());
                 System.out.println("解压文件:" + entry.getName());
                 // 如果是文件夹，就创建个文件夹
                 if (entry.isDirectory()) {

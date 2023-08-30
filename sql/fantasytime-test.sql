@@ -1,4 +1,4 @@
-create database fantasytime;
+use fantasytime;
 
 create table ft_area
 (
@@ -227,7 +227,7 @@ create table ft_works_watch_history
     edit_time datetime default CURRENT_TIMESTAMP null comment '修改时间'
 )
     comment '观看历史记录';
-
+set global log_bin_trust_function_creators=TRUE;
 create definer = root@`%` function GET_AREA_NAME(AREA_id varchar(20)) returns varchar(20)
 begin
     declare cid varchar(20);      #在函数中定义一个变量，用来接收函数返回值

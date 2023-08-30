@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -391,6 +392,8 @@ public class WorksController {
             worksService.uploadWork(worksTo, request);
         } catch (ExecutionException | InterruptedException e) {
             return R.error();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
         }
         return R.ok();
     }

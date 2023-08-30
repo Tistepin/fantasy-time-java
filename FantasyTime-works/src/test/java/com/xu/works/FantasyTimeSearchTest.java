@@ -1,28 +1,23 @@
 package com.xu.works;
 
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.xu.common.utils.MD5;
-import com.xu.security.entity.User;
 import com.xu.works.constant.WorksEnum;
+import com.xu.common.constant.systemEnum;
 import com.xu.works.dao.WorksDao;
 import com.xu.works.entity.PopularityEntity;
 import com.xu.works.entity.WorksEntity;
 import com.xu.works.scheduled.WorksPopularityTimer;
 import com.xu.works.service.PopularityService;
 import com.xu.works.service.WorksService;
-import com.xu.works.vo.WorksVo;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.net.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -115,5 +110,20 @@ public class FantasyTimeSearchTest {
         }
     }
 
+    @Test
+    public void testIp() throws UnknownHostException, SocketException {
+        InetAddress localHost = InetAddress.getLocalHost();
+        String hostAddress = localHost.getHostAddress();
+        String hostName = localHost.getHostName();
+        System.out.println("传统方式-----------hostAddress = " + hostAddress);
+    }
 
+
+    @Test
+    void TestUSERNAME(){
+        System.out.println(systemEnum.USERIP.getMsg());
+        System.out.println(systemEnum.USERNAME.getMsg());
+
+
+    }
 }

@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xu.common.TO.es.WorksEsModel;
+import com.xu.common.constant.systemEnum;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.Query;
 import com.xu.common.utils.R;
@@ -34,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -178,7 +181,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
 
     @Override
     @Transactional
-    public void uploadWork(WorksTo worksTo, HttpServletRequest request) throws ExecutionException, InterruptedException {
+    public void uploadWork(WorksTo worksTo, HttpServletRequest request) throws ExecutionException, InterruptedException, UnknownHostException {
         CompletableFuture<WorksEntity> fantasyTimetoken = CompletableFuture.supplyAsync(() -> {
             // 转换数据把to数据转换到Entity中
             WorksEntity worksEntity = new WorksEntity();
@@ -218,7 +221,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
             CompletableFuture.allOf(fantasyTimetoken, worksDefaultImageEntityCompletableFuture).get();
         }
         //
-        works.setDefaultImage("http://10.161.139.216/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
+        works.setDefaultImage("http://" + systemEnum.USERIP.getMsg() + "/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
         this.baseMapper.updateById(works);
     }
 
@@ -666,7 +669,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
     /* 获取插图集 */
     @Override
     public List<WorksEntity> GetIllustration(HttpServletRequest request) {
-        return this.baseMapper.selectList(new QueryWrapper<WorksEntity>().eq("works_type", 3).eq("review_status",1));
+        return this.baseMapper.selectList(new QueryWrapper<WorksEntity>().eq("works_type", 3).eq("review_status", 1));
     }
 
     @Override
@@ -677,10 +680,10 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         List<WorksEntity> worksTosmanhua = new ArrayList<>();
         worksEntities.forEach(
                 item -> {
-                    if (item.getWorksType()==1){
+                    if (item.getWorksType() == 1) {
                         worksTosmanhua.add(item);
                     }
-                    if (item.getWorksType()==3){
+                    if (item.getWorksType() == 3) {
                         worksToschatu.add(item);
                     }
                 }

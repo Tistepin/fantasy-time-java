@@ -72,7 +72,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = securityUser.getUsername();
         String token = tokenManager.createToken(username);
         //3.把用户名和用户权限列表放入redis
-        boolean aBoolean = stringRedisTemplate.hasKey(username) != null;
+        boolean aBoolean = Boolean.TRUE.equals(stringRedisTemplate.hasKey(username));
         if (!aBoolean){
             stringRedisTemplate.opsForList().leftPushAll(username,securityUser.getPermissionValueList());
         }

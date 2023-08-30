@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xu.common.constant.systemEnum;
 import com.xu.common.utils.PageUtils;
 import com.xu.common.utils.Query;
 import com.xu.security.utils.TokenManager;
@@ -249,7 +250,7 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
         if (cartoonWorksDetailsEntity != null) {
             Long worksId = cartoonWorksDetailsEntity.getWorksId();
             WorksEntity worksEntity = worksService.getById(worksId);
-            String sourceFilePath = "C:/Users/F3863479/Desktop/Test/" + worksEntity.getWorksName() + "/" + cartoonWorksDetailsEntity.getCartoonChapterId();
+            String sourceFilePath = "C:/Users/"+ systemEnum.USERNAME.getMsg() +"/Desktop/Test/" + worksEntity.getWorksName() + "/" + cartoonWorksDetailsEntity.getCartoonChapterId();
             // 判断存储的路径的最后以为是不是/ 或者 \ 是就不需要添加
             String substring = zipFilePath.substring(zipFilePath.length() - 2);
             if (substring.equals("\\")) {

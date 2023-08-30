@@ -11,6 +11,7 @@ import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +55,7 @@ public interface WorksService extends IService<WorksEntity> {
 
     List<WorksVo> getWorksInfo(List<Long> worksIds);
 
-    void uploadWork(WorksTo worksTo, HttpServletRequest request) throws ExecutionException, InterruptedException;
+    void uploadWork(WorksTo worksTo, HttpServletRequest request) throws ExecutionException, InterruptedException, UnknownHostException;
 
     List<WorksVo> getWorksPage(Integer worksType, List<Long> worksList, Integer page, Integer limit);
 

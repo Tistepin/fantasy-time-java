@@ -3,7 +3,6 @@ package com.xu.works.constant;
 /**
  * @Description:
  * @author: 徐國紀
- * @author: F3863479
  * @createTime: 2023-01-2023/1/10-上午 10:25
  */
 public enum UserEnum {

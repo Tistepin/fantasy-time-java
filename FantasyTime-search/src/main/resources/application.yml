@@ -8,7 +8,7 @@ spring:
   redis:
     port: 6379
     password: xu20010502
-    host: 127.0.0.1
+    host: 192.168.125.129
 #  zipkin:
 #    base-url: http://localhost:9411
 #  sleuth:

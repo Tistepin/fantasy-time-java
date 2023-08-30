@@ -47,7 +47,7 @@ public class FileServiceImpl implements FileService {
         // 创建目录
         String url = "";
         if (worksName != null) {
-            url = "C:/Users/F3863479/Desktop/Test/" + worksName;
+            url = "C:/Users/Tistben/Desktop/Test/" + worksName;
         }
         if (worksChapterId != null) {
             url += "/" + worksChapterId;
@@ -87,7 +87,7 @@ public class FileServiceImpl implements FileService {
         deleteFiles(file);
     }
     private static void deleteFiles(File directory) {
-       if (directory.getParent().equals("C:\\Users\\F3863479\\Desktop\\Test")){
+       if (directory.getParent().equals("C:\\Users\\Tistben\\Desktop\\Test")){
            directory.delete();
        }else{
            directory.delete();
@@ -99,8 +99,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<String> policy4(String worksName, MultipartFile zipFile) {
         //C:\Users\登录用户~1\AppData\Local\Temp\
-        String pathName = "C:\\Users\\F3863479\\Desktop\\Test\\" + worksName+"\\压缩包";
-        String dec = "C:\\Users\\F3863479\\Desktop\\Test\\" + worksName;
+        String pathName = "C:\\Users\\Tistben\\Desktop\\Test\\" + worksName+"\\压缩包";
+        String dec = "C:\\Users\\Tistben\\Desktop\\Test\\" + worksName;
         File file = new File(pathName);
         //如果文件夹不存在  创建文件夹
         if (!file.exists()) {

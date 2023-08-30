@@ -46,7 +46,7 @@
             #{item}
         </foreach>
         ) and delete_status = 1
-        and review_status=1 order by works_popularity desc
+        and review_status=1 and works_status=2 order by works_popularity desc
     </select>
     <select id="getPopularSerial" resultType="com.xu.works.entity.WorksEntity">
         select works_id, works_name, default_image, works_renew, works_popularity, works_type,works_describe

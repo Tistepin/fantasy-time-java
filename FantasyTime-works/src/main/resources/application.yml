@@ -3,12 +3,12 @@ server:
 spring:
   redis:
     port: 6379
+    host: 192.168.125.129
     password: xu20010502
-    host: 127.0.0.1
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name:  com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/fantasytime?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.125.129:3306/fantasytime?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
     username: root
     password: xu20010502
   application:

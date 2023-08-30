@@ -105,8 +105,13 @@ public class WorksBookshelfController {
         Boolean bool = worksBookshelfService.GetYesOrNoFavorite(worksId, request);
         if (bool) {
             return R.ok();
+        }else{
+
+            R r = R.ok();
+            r.setCode(20001);
+            r.setMessage("没有收藏");
+            return r;
         }
-        return R.error();
     }
 
 }

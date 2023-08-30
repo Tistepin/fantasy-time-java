@@ -1,5 +1,3 @@
-use fantasytime;
-
 create table ft_area
 (
     id bigint auto_increment comment 'id'
@@ -37,6 +35,22 @@ create table ft_category
     delete_status bigint default 1 not null comment '逻辑删除状态 0-已删除 1-未删除'
 )
     comment '作品类型';
+
+create table ft_contact
+(
+    id bigint unsigned auto_increment
+        primary key,
+    created_at datetime(3) null,
+    updated_at datetime(3) null,
+    deleted_at datetime(3) null,
+    owner_id bigint unsigned null,
+    target_id bigint unsigned null,
+    type bigint null,
+    desc_info longtext null
+);
+
+create index idx_ft_contact_deleted_at
+    on ft_contact (deleted_at);
 
 create table ft_novel_works_details
 (
@@ -227,7 +241,7 @@ create table ft_works_watch_history
     edit_time datetime default CURRENT_TIMESTAMP null comment '修改时间'
 )
     comment '观看历史记录';
-set global log_bin_trust_function_creators=TRUE;
+
 create definer = root@`%` function GET_AREA_NAME(AREA_id varchar(20)) returns varchar(20)
 begin
     declare cid varchar(20);      #在函数中定义一个变量，用来接收函数返回值

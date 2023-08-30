@@ -81,7 +81,7 @@ public class ContactController {
 
 
     // 查询好友 和好友状态
-    @ApiOperation(value = "获取用户实体类", notes = "获取用户实体类")
+    @ApiOperation(value = "查询好友 和好友状态", notes = "查询好友 和好友状态")
     @ApiResponses({
             @ApiResponse(code = 20000, message = "請求成功", response = R.class)
     })
@@ -93,5 +93,17 @@ public class ContactController {
         }
         return R.ok();
     }
-
+    // 查询是否关注
+    @ApiOperation(value = "查询是否关注", notes = "查询是否关注")
+    @ApiResponses({
+            @ApiResponse(code = 20000, message = "請求成功", response = R.class)
+    })
+    @PostMapping("/GetCheckContact")
+    public R GetCheckContact(HttpServletRequest request){
+        List<ContactEntity> contactEntityList= contactService.GetCheckContact(request);
+        if (contactEntityList.size()!=0){
+            return R.ok().data("GetCheckContact",contactEntityList.size()>0);
+        }
+        return R.ok();
+    }
 }

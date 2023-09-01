@@ -221,7 +221,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
             CompletableFuture.allOf(fantasyTimetoken, worksDefaultImageEntityCompletableFuture).get();
         }
         //
-        works.setDefaultImage("http://" + systemEnum.USERIP.getMsg() + "/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
+        works.setDefaultImage("http://" + systemEnum.USERIP.getMsg() + ":8084/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
         this.baseMapper.updateById(works);
     }
 

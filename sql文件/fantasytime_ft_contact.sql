@@ -9,7 +9,8 @@ create table ft_contact
     target_id  bigint unsigned null,
     type       bigint          null,
     desc_info  longtext        null
-);
+)
+    comment '好友关系表';
 
 create index idx_ft_contact_deleted_at
     on ft_contact (deleted_at);

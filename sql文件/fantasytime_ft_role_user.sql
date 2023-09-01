@@ -13,3 +13,4 @@ INSERT INTO fantasytime.ft_role_user (uid, rid, create_time, edit_time, delete_s
 INSERT INTO fantasytime.ft_role_user (uid, rid, create_time, edit_time, delete_status) VALUES (6, 1, '2023-02-21 10:15:31', null, 1);
 INSERT INTO fantasytime.ft_role_user (uid, rid, create_time, edit_time, delete_status) VALUES (7, 1, '2023-02-21 10:19:32', null, 1);
 INSERT INTO fantasytime.ft_role_user (uid, rid, create_time, edit_time, delete_status) VALUES (8, 1, '2023-02-21 10:21:38', null, 1);
+INSERT INTO fantasytime.ft_role_user (uid, rid, create_time, edit_time, delete_status) VALUES (11, 1, '2023-08-29 15:53:21', null, 1);

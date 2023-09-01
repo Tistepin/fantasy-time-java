@@ -18,4 +18,4 @@ create table ft_popularity
     comment '作品人气';
 
 INSERT INTO fantasytime.ft_popularity (id, works_id, name, works_type, works_status, works_popularity_count, works_popularity_today, works_popularity_three_days, works_popularity_thisWeek, works_popularity_thisMonth, delete_status, create_time, edit_time) VALUES (1, 1, '刃牙外传 盖亚与西科尔斯基 ~有时候是野村 虽为二人的三人生活~', 1, 1, 5809, 50, 959, 1509, 1709, 1, '2023-01-06 08:03:28', '2023-02-15 00:00:01');
-INSERT INTO fantasytime.ft_popularity (id, works_id, name, works_type, works_status, works_popularity_count, works_popularity_today, works_popularity_three_days, works_popularity_thisWeek, works_popularity_thisMonth, delete_status, create_time, edit_time) VALUES (7, 24, '为美好的世界献上祝福', 1, 1, 1, 0, 1, 1, 1, 1, '2023-07-08 08:31:38', '2023-07-08 08:37:07');
+INSERT INTO fantasytime.ft_popularity (id, works_id, name, works_type, works_status, works_popularity_count, works_popularity_today, works_popularity_three_days, works_popularity_thisWeek, works_popularity_thisMonth, delete_status, create_time, edit_time) VALUES (7, 24, '为美好的世界献上祝福', 1, 1, 3, 1, 3, 3, 3, 1, '2023-07-08 08:31:38', '2023-08-30 00:00:02');

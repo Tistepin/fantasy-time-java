@@ -32,7 +32,7 @@ public class FantasyTimeSearchTest {
     @Test
     public void Test1() throws IOException {
         HashMap<String, String> map = new HashMap<>();
-        map.put("defaultImage","http://"+ systemEnum.USERIP.getMsg() +"/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=1");
+        map.put("defaultImage","http://"+ systemEnum.USERIP.getMsg() +":8084/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=1");
         UpdateRequest.Builder<Object, Object> defaultImage = new UpdateRequest.Builder<>().index(EsConstant.WORKS_INDEX);
         UpdateRequest<Object, Object> build = defaultImage.id(String.valueOf(1))
                 .doc(map)

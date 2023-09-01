@@ -1,0 +1,17 @@
+# 公司电脑
+server:
+  port: 8081
+spring:
+  application:
+    #项目名
+    name: fantasytime-works
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        prefix: application
+        namespace: 0f54d3d2-248c-4bda-84dd-06beac661922
+        group: test
+        file-extension: yaml
+

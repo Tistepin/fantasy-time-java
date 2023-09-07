@@ -8,10 +8,10 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 47.115.224.241:8848
       config:
-        prefix: application
-        namespace: 0f54d3d2-248c-4bda-84dd-06beac661922
+        prefix: fantasytime-works.
+        namespace: fc6a9752-d58e-414e-b713-58dcd689fa13
         group: test
         file-extension: yaml
 

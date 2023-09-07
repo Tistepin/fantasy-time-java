@@ -1,4 +1,4 @@
-package com.xu.thirdparty.service.Impl;
+package com.xu.works.service.impl;
 
 
 import com.alibaba.fastjson.JSON;
@@ -7,10 +7,12 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xu.common.constant.ResultCode;
 import com.xu.common.utils.R;
-import com.xu.thirdparty.entity.OSSRemovesVo;
-import com.xu.thirdparty.fegin.WorksService;
-import com.xu.thirdparty.service.FileService;
-import com.xu.thirdparty.utils.ZipUtil;
+import com.xu.works.controller.WorksChapterDetailedViewingContentController;
+import com.xu.works.controller.WorksController;
+import com.xu.works.controller.WorksDefaultImageController;
+import com.xu.works.entity.OSSRemovesVo;
+import com.xu.works.service.FileService;
+import com.xu.works.utils.ZipUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,8 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-
 /**
  * @author 徐國紀
  * @Name F3863479
@@ -36,8 +36,14 @@ import java.io.InputStream;
 @Service("FileService")
 public class FileServiceImpl implements FileService {
 
+
+
     @Autowired
-    WorksService WorksService;
+    WorksController worksController;
+    @Autowired
+    WorksDefaultImageController worksDefaultImageController;
+    @Autowired
+    WorksChapterDetailedViewingContentController worksChapterDetailedViewingContentControllerl;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
@@ -156,7 +162,7 @@ public class FileServiceImpl implements FileService {
         // 0 不是 1 是
         String Url = null;
         if (imageDefaultStatus == 1) {
-            R imageData = WorksService.getWorksDefaultImage(worksId.longValue());
+            R imageData = worksDefaultImageController.getWorksDefaultImage(worksId.longValue());
             if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
                 JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
                 Url = jsonObject.get("worksDefaultImage").toString();
@@ -164,7 +170,7 @@ public class FileServiceImpl implements FileService {
                 throw new RuntimeException("没有该图片");
             }
         } else {
-            R imageData = WorksService.getImageData(worksId, worksChapterId, imageId);
+            R imageData = worksChapterDetailedViewingContentControllerl.getImageData(worksId, worksChapterId, imageId);
             if (imageData.getCode() == ResultCode.SUCCESS.getCode()) {
                 JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(imageData.getData().get("data"), SerializerFeature.WriteMapNullValue), Feature.OrderedField);
                 Url = jsonObject.get("worksChapterLocation").toString();

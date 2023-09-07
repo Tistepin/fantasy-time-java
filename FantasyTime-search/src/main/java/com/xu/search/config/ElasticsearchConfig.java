@@ -61,7 +61,7 @@ public class ElasticsearchConfig {
     //注入IOC容器
     @Bean
     public ElasticsearchClient elasticsearchClient() {
-        RestClient client = RestClient.builder(new HttpHost("127.0.0.1", 9200, "http"))
+        RestClient client = RestClient.builder(new HttpHost("47.115.224.241", 9200, "http"))
                 .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
                     @Override
                     public RequestConfig.Builder customizeRequestConfig(

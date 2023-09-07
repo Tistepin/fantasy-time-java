@@ -1,0 +1,49 @@
+version: "3.8"
+
+networks:
+  edu:
+
+services:
+  # 定义服务名字，只要不冲突即可
+  gateway:
+    # 镜像名字
+    image: gateway:1.0
+    # 自定义容器名字
+    container_name: gateway
+    ports:
+      - "8084:8084"
+      # 网络模式
+    networks:
+      - edu
+  fantasytimesearch:
+    image: fantasytimesearch:1.0
+    container_name: fantasytimesearch
+    ports:
+      - "8083:8083"
+    networks:
+      - edu
+  fantasytime-third-party:
+    image: fantasytime-third-party:1.0
+    container_name: fantasytime-third-party
+    ports:
+      - "9100:9100"
+    networks:
+      - edu
+  fantasytime-works:
+    image: fantasytime-works:1.0
+    container_name: fantasytime-works
+    ports:
+      - "8081:8081"
+    networks:
+      - edu
+  renren-fast:
+    image: renren-fast:1.0
+    container_name: renren-fast
+    ports:
+      - "8080:8080"
+    networks:
+      - edu
+    environment:
+      - spring.profiles.active=dev
+
+

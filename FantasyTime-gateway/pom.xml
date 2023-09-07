@@ -12,7 +12,6 @@
     <packaging>jar</packaging>
     <artifactId>FantasyTime-gateway</artifactId>
     <dependencies>
-
         <dependency>
             <groupId>com.xu</groupId>
             <artifactId>FantasyTime-common</artifactId>

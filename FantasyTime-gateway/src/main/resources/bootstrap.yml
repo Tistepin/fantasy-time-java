@@ -1,0 +1,16 @@
+#spring:
+#  profiles:
+#    active: dev
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 47.115.224.241:8848
+#      config:
+#        prefix: fantasytime-gateway
+#        namespace: 1078c902-8008-4989-9857-d3aec2398b95
+#        group: dev
+#        file-extension: yaml
+#        server-addr: 47.115.224.241:8848
+#
+#server:
+#  port: 8084

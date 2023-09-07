@@ -1,6 +1,7 @@
 package com.xu.thirdparty.service;
 
 
+import com.xu.thirdparty.entity.OSSRemovesVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ public interface FileService   {
 
     String upload(String worksName, String worksChapterId, MultipartFile file) throws IOException;
 
-    void removeFile(String url);
+    void removeFile(OSSRemovesVo url);
 
     List<String> policy4(String worksName , MultipartFile file);
 }

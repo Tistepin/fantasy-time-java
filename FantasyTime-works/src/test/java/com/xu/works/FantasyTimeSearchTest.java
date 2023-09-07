@@ -11,10 +11,12 @@ import com.xu.works.service.PopularityService;
 import com.xu.works.service.WorksService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
@@ -115,7 +117,8 @@ public class FantasyTimeSearchTest {
         InetAddress localHost = InetAddress.getLocalHost();
         String hostAddress = localHost.getHostAddress();
         String hostName = localHost.getHostName();
-        System.out.println("传统方式-----------hostAddress = " + hostAddress);
+
+
     }
 
 
@@ -125,5 +128,48 @@ public class FantasyTimeSearchTest {
         System.out.println(systemEnum.USERNAME.getMsg());
 
 
+    }
+    //获取真实	IP
+    //獲取運行本機服務器的ip
+    public static String getLocalHostAddress() throws Exception{
+        InetAddress address = null;
+        try {
+            address = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        return address.getHostAddress();
+    }
+    private static String getHostIP() throws SocketException {
+        Enumeration<NetworkInterface> allNetInterfaces = null;
+        String resultIP=null;
+        try {
+            allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+        } catch (Exception e) {
+        }
+        InetAddress ip = null;
+        while (allNetInterfaces.hasMoreElements()) {
+            NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
+            Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                ip = (InetAddress) addresses.nextElement();
+                if (ip != null && ip instanceof Inet4Address) {
+                    if (resultIP==null) {
+                        resultIP= ip.getHostAddress();
+                    }
+                    System.out.println("本机地址是："+ip.getHostAddress());
+                }
+            }
+        }
+        return resultIP;
+    }
+
+
+    @Value("${IP}")
+    public String IP;
+    @Test
+    public void TestYmlIp(){
+        System.out.println(IP);
     }
 }

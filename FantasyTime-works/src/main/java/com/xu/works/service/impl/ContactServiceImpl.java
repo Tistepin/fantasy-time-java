@@ -14,6 +14,7 @@ import com.xu.works.entity.UserEntity;
 import com.xu.works.service.ContactService;
 import com.xu.works.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -41,7 +42,9 @@ public class ContactServiceImpl extends ServiceImpl<ContactDao, ContactEntity> i
 
         return new PageUtils(page);
     }
-
+    //资源映射路径 前缀
+    @Value("${IP}")
+    public String IP;
     @Override
     public ArrayList<HashMap<String, Object>> GetContactState(HttpServletRequest request) {
 
@@ -54,7 +57,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactDao, ContactEntity> i
         // 获取好友信息
         List<UserEntity> userEntities = userService.listByIds(Ids);
         // 访问go 查找状态
-        String s = httpGet("http://localhost:8883/GetContactStates?ids=" + Ids);
+        String s = httpGet("http://"+IP+":8883/GetContactStates?ids=" + Ids);
         JSONObject jsonObject = JSONObject.parseObject(s, Feature.OrderedField);
         String data = jsonObject.get("Data").toString();
         // json 转换为map

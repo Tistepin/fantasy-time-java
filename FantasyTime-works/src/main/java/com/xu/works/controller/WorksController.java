@@ -462,7 +462,7 @@ public class WorksController {
         try {
             worksService.review(reviewWorksTo, httpRequest);
         } catch (Exception e) {
-            searchFeignService.DeleteWorksUpErrorData(reviewWorksTo.getWorksId());
+//            searchFeignService.DeleteWorksUpErrorData(reviewWorksTo.getWorksId());
             return R.error();
         }
         return R.ok();
@@ -505,14 +505,14 @@ public class WorksController {
             worksService.WorksInBookshelfUpdate(saveBookToShelfTo);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
-            //TODO 作品如果没有更新完成 那么就回滚es的数据
-            // 先获取
-            R r = searchFeignService.GetEsWorks(saveBookToShelfTo.getWorksId());
-            if (r.getCode().equals(20000)) {
-                WorksEsModel data = (WorksEsModel)r.getData().get("data");
-                searchFeignService.UpdateEs(data);
-            }
-            e.fillInStackTrace();
+//            //TODO 作品如果没有更新完成 那么就回滚es的数据
+//            // 先获取
+//            R r = searchFeignService.GetEsWorks(saveBookToShelfTo.getWorksId());
+//            if (r.getCode().equals(20000)) {
+//                WorksEsModel data = (WorksEsModel)r.getData().get("data");
+//                searchFeignService.UpdateEs(data);
+//            }
+//            e.fillInStackTrace();
             channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
         }
     }

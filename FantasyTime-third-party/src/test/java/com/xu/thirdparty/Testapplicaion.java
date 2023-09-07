@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -26,10 +27,7 @@ public class Testapplicaion {
 
     @Test
     public void Test2() {
-        int a=10;
-        int b=a;
-        b=12;
-        System.out.println("a"+a);
-        System.out.println("b"+b);
+        String a ="5.zip";
+        System.out.println(a.split("\\.")[0]);
     }
 }

@@ -1,18 +1,14 @@
-#server:
-#  port: 8081
-#spring:
-#  application:
-#    #项目名
-#    name: fantasytime-works
-#  profiles:
-#    active: test
-#  cloud:
-#    nacos:
-#      discovery:
-#        server-addr: 127.0.0.1:8848
-#      config:
-#        prefix: application
-#        namespace: home9af7059f-7fc7-4d11-8605-d57df8476d3c
-#        group: home
-#        file-extension: yaml
-#
+server:
+  port: 8081
+spring:
+  application:
+    #项目名
+    name: fantasytime-works
+  profiles:
+    active: test
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+IP: 10.161.139.216

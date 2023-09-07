@@ -1,17 +1,17 @@
-# 打包用
-server:
-  port: 8081
-spring:
-  application:
-    #项目名
-    name: fantasytime-works
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-      config:
-        prefix: application
-        namespace: 28372da7-df74-4eb5-985e-2a09288e15a4
-        group: dev
-        file-extension: yaml
-
+## 打包用
+#server:
+#  port: 8081
+#spring:
+#  application:
+#    #项目名
+#    name: fantasytime-works
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#      config:
+#        prefix: application
+#        namespace: 28372da7-df74-4eb5-985e-2a09288e15a4
+#        group: dev
+#        file-extension: yaml
+#

@@ -1,14 +1,23 @@
 spring:
   application:
     name: fantasytime-search
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.153.134:8848
+
+
+
+    loadbalancer:
+      retry:
+        enabled: true
   redis:
     port: 6379
     password: xu20010502
     host: 192.168.153.134
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+
+
 #  zipkin:
 #    base-url: http://localhost:9411
 #  sleuth:
@@ -21,3 +30,4 @@ logging:
     tracer: trace
 server:
   port: 8083
+

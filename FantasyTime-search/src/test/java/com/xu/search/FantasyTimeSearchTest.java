@@ -29,6 +29,7 @@ public class FantasyTimeSearchTest {
 
     @Autowired
     private ElasticsearchClient client;
+
     @Test
     public void Test1() throws IOException {
         HashMap<String, String> map = new HashMap<>();

@@ -28,6 +28,7 @@ import com.xu.works.vo.WorksInfoVo;
 import com.xu.works.vo.WorksVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -178,7 +179,9 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
     public List<WorksVo> getWorksInfo(List<Long> worksIds) {
         return this.baseMapper.getWorksInfo(worksIds);
     }
-
+    //资源映射路径 前缀
+    @Value("${IP}")
+    public String IP;
     @Override
     @Transactional
     public void uploadWork(WorksTo worksTo, HttpServletRequest request) throws ExecutionException, InterruptedException, UnknownHostException {
@@ -221,7 +224,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
             CompletableFuture.allOf(fantasyTimetoken, worksDefaultImageEntityCompletableFuture).get();
         }
         //
-        works.setDefaultImage("http://" + systemEnum.USERIP.getMsg() + ":8084/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
+        works.setDefaultImage("http://" + IP + ":8084/api/oss/getWorkContent?ImageDefaultStatus=1&WorksId=" + works.getWorksId());
         this.baseMapper.updateById(works);
     }
 
@@ -347,7 +350,7 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         }, executor);
         Void unused = CompletableFuture.allOf(voidCompletableFuture, voidCompletableFuture1, voidCompletableFuture2, voidCompletableFuture3).get();
         // 审核完成 把作品上传到es
-        UpEs(worksId);
+//        UpEs(worksId);
     }
 
     /**
@@ -625,21 +628,22 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
                         .set("works_renew", WorksRenew)
                         .set("works_update_time", new Date(System.currentTimeMillis()))
         );
-        String s = UpdateWorksEs(worksId);
-        if (!s.equals("OK")) {
-            throw new RuntimeException("章节信息更新失败");
-        }
+//        String s = UpdateWorksEs(worksId);
+//        if (!s.equals("OK")) {
+//            throw new RuntimeException("章节信息更新失败");
+//        }
     }
 
     @Override
     public String UpdateWorksEs(Long worksID) {
-        WorksEsModel worksEsModel = GetWorksEsModel(worksID);
-        R r = searchFeignService.UpdateEs(worksEsModel);
-        if (r.getCode() == 20000) {
+//        WorksEsModel worksEsModel = GetWorksEsModel(worksID);
+//        R r = searchFeignService.UpdateEs(worksEsModel);
+//        if (r.getCode() == 20000) {
             return "OK";
-        } else {
-            return "es修改失败";
-        }
+//        } else {
+//            return "es修改失败";
+//        }
+
     }
 
     @Override

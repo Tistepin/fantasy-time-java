@@ -1,14 +1,17 @@
 package com.xu.thirdparty.controller;
 
 import com.xu.common.utils.R;
+import com.xu.thirdparty.entity.OSSRemovesVo;
 import com.xu.thirdparty.service.FileService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,13 +83,13 @@ public class OssController {
     })
 
     @DeleteMapping("/remove")
-    public R remove(
-//            @ApiParam(value = "要删除的文件路径", required = true)
-            @RequestParam("url") String url) {
-        fileService.removeFile(url);
+    public R remove(@RequestBody OSSRemovesVo ossRemovesV) {
+        fileService.removeFile(ossRemovesV);
         return R.ok();
     }
 
+
+    // 上传作品
     @PostMapping("/policy3")
     public R policy3(
             //@ApiParam(value = "文件", required = true)
@@ -101,6 +104,7 @@ public class OssController {
         return R.error();
     }
 
+    //上传压缩包
     @PostMapping("/policy4")
     public R policy4(
             @RequestParam(value = "WorksName", required = false) String WorksName,
@@ -112,5 +116,25 @@ public class OssController {
             return R.ok().data("messages", "上传成功").data("url", urls);
         }
         return R.error();
+    }
+
+    //资源映射路径 前缀
+    @Value("${file.gs.Zip}")
+    public String localFilePrefix;
+
+    //域名或本机访问地址
+    @Value("${file.gs.domain}")
+    public String domain;
+
+    //上传文件存储在本地的根路径
+    @Value("${file.gs.path}")
+    private String path;
+    @RequestMapping("/get")
+    public  HashMap<String, String> get() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("localFilePrefix",localFilePrefix);
+        map.put("domain",domain);
+        map.put("path",path);
+        return map;
     }
 }

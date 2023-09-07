@@ -8,7 +8,25 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.153.134:8848
+        server-addr: 127.0.0.1:8848
 server:
   port: 9100
 
+
+file:
+  gs:
+    domain: 127.0.0.1
+    path: C:/Users/F3863479/Desktop/Test/
+    Zip: C:\Users\F3863479\Desktop\Test
+  dev:
+    domain: http://172.11.1.1:9300(服务器ip:端口)
+    path: /home/admin/test(文件在linux的存放地址)
+    prefix: /statics
+  docker-gs:
+    domain: http://172.11.1.1:9300(服务器ip:端口)
+    path: /home/admin/test(文件在linux的存放地址)
+    prefix: /statics
+  docker-home:
+    domain: http://172.11.1.1:9300(服务器ip:端口)
+    path: /home/admin/test(文件在linux的存放地址)
+    prefix: /statics

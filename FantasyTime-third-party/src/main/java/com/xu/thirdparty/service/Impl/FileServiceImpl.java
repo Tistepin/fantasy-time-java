@@ -6,12 +6,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xu.common.constant.ResultCode;
-import com.xu.common.constant.systemEnum;
 import com.xu.common.utils.R;
+import com.xu.thirdparty.entity.OSSRemovesVo;
 import com.xu.thirdparty.fegin.WorksService;
 import com.xu.thirdparty.service.FileService;
 import com.xu.thirdparty.utils.ZipUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,12 @@ public class FileServiceImpl implements FileService {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+
+
+    //上传文件存储在本地的根路径
+    @Value("${file.gs.path}")
+    private String path;
+
     /**
      * 图片上传
      */
@@ -48,7 +55,7 @@ public class FileServiceImpl implements FileService {
         // 创建目录
         String url = "";
         if (worksName != null) {
-            url = "C:/Users/"+ systemEnum.USERNAME.getMsg() +"/Desktop/Test/" + worksName;
+            url = path + worksName;
         }
         if (worksChapterId != null) {
             url += "/" + worksChapterId;
@@ -82,26 +89,32 @@ public class FileServiceImpl implements FileService {
 
     }
 
+    //上传文件存储在本地的根路径
+    @Value("${file.gs.Zip}")
+    private  String Zip;
+
     @Override
-    public void removeFile(String datapath) {
-        File file = new File(datapath);
-        deleteFiles(file);
+    public void removeFile(OSSRemovesVo datapath) {
+        datapath.getUrls().forEach(item ->{
+            File file = new File(item);
+            deleteFiles(file,Zip);
+        });
+
     }
-    private static void deleteFiles(File directory) {
-       if (directory.getParent().equals("C:\\Users\\"+systemEnum.USERNAME.getMsg()+"\\Desktop\\Test")){
+    private static void deleteFiles(File directory,String zip) {
+       if (directory.getParent().equals(zip)){
            directory.delete();
        }else{
            directory.delete();
-           deleteFiles(directory.getParentFile());
+           deleteFiles(directory.getParentFile(),zip);
        }
     }
-
 
     @Override
     public List<String> policy4(String worksName, MultipartFile zipFile) {
         //C:\Users\登录用户~1\AppData\Local\Temp\
-        String pathName = "C:\\Users\\"+systemEnum.USERNAME.getMsg()+"\\Desktop\\Test\\" + worksName+"\\压缩包";
-        String dec = "C:\\Users\\"+systemEnum.USERNAME.getMsg()+"\\Desktop\\Test\\" + worksName;
+        String pathName = Zip+ "\\"+ worksName+"\\压缩包";
+        String dec =Zip + "\\"+ worksName;
         File file = new File(pathName);
         //如果文件夹不存在  创建文件夹
         if (!file.exists()) {
@@ -110,7 +123,7 @@ public class FileServiceImpl implements FileService {
         //获取文件名（包括后缀）
 
         String pname = zipFile.getOriginalFilename();
-        pathName = pathName+ "/"+ pname;
+        pathName =pathName+ "\\"+ pname;
         try {
             File dest = new File(pathName);
             zipFile.transferTo(dest);

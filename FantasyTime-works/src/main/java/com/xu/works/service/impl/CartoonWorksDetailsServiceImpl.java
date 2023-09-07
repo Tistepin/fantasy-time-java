@@ -96,6 +96,8 @@ public class CartoonWorksDetailsServiceImpl extends ServiceImpl<CartoonWorksDeta
             // 降序
             queryWrapper.orderByDesc("cartoon_chapter_id");
         }
+        queryWrapper.eq("delete_status",1);
+        queryWrapper.eq("review_status",1);
         return this.baseMapper.selectList(queryWrapper);
     }
 

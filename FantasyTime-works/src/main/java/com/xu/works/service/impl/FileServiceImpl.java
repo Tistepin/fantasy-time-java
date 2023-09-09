@@ -157,7 +157,7 @@ public class FileServiceImpl implements FileService {
      * @Params [worksId, worksChapterId, response]
      */
     @Override
-    @Async
+//    @Async
     public void GetWorkContent(Integer worksId, Integer worksChapterId, Integer imageId, HttpServletResponse response, Integer imageDefaultStatus) {
         // 0 不是 1 是
         String Url = null;

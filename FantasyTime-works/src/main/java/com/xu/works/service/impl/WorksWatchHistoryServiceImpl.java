@@ -89,7 +89,9 @@ public class WorksWatchHistoryServiceImpl extends ServiceImpl<WorksWatchHistoryD
 
     @Override
     public void Record(WorksWatchHistoryTo worksWatchHistoryTo, HttpServletRequest request) {
-        WorksWatchHistoryEntity worksWatchHistoryEntity1 = this.baseMapper.selectOne(new QueryWrapper<WorksWatchHistoryEntity>().eq("works_id", worksWatchHistoryTo.getWorksId()));
+        // 获取用户ID
+        UserEntity userEntity = userService.getUserEntity(request);
+        WorksWatchHistoryEntity worksWatchHistoryEntity1 = this.baseMapper.selectOne(new QueryWrapper<WorksWatchHistoryEntity>().eq("works_id", worksWatchHistoryTo.getWorksId()).eq("user_id",userEntity.getId()));
         // 获取章节信息
         Long cartoonChapterId = worksWatchHistoryTo.getCartoonChapterId();
         CartoonWorksDetailsEntity cartoonWorksDetailsEntity = cartoonWorksDetailsService.getById(cartoonChapterId);
@@ -102,7 +104,6 @@ public class WorksWatchHistoryServiceImpl extends ServiceImpl<WorksWatchHistoryD
             this.baseMapper.updateById(worksWatchHistoryEntity1);
         } else {
             // 获取用户ID
-            UserEntity userEntity = userService.getUserEntity(request);
             Long UserId = userEntity.getId();
             // 获取作品实体类
             Long worksId = worksWatchHistoryTo.getWorksId();

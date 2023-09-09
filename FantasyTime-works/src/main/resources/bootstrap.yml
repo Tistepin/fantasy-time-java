@@ -1,9 +1,9 @@
-spring:
-  profiles:
-    active: dev
-
-server:
-  port: 8081
+#spring:
+#  profiles:
+#    active: dev
+#
+#server:
+#  port: 8081
 
 
 file:

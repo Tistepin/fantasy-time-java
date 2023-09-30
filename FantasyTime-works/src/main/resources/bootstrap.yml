@@ -1,28 +1,28 @@
-#spring:
-#  profiles:
-#    active: dev
-#
-#server:
-#  port: 8081
+spring:
+  profiles:
+    active: dev
+
+server:
+  port: 8081
 
 
-file:
-  gs:
-    domain: 127.0.0.1
-    path: C:/Users/Tistben/Desktop/Test/
-    Zip: C:\Users\Tistben\Desktop\Test
+#file:
+#  gs:
+##    domain: 127.0.0.1
+##    path: C:/Users/Tistben/Desktop/Test/
+##    Zip: C:\Users\Tistben\Desktop\Test
 #    domain: 47.115.224.241
 #    path: /mydata/java/tu
 #    Zip: /mydata/java/tu
-  dev:
-    domain: 47.115.224.241
-    path: /mydata/java/tu
-    Zip: /mydata/java/tu
-  docker-gs:
-    domain: http://172.11.1.1:9300(服务器ip:端口)
-    path: /home/admin/test(文件在linux的存放地址)
-    prefix: /statics
-  docker-home:
-    domain: http://172.11.1.1:9300(服务器ip:端口)
-    path: /home/admin/test(文件在linux的存放地址)
-    prefix: /statics
+#  dev:
+#    domain: 47.115.224.241
+#    path: /mydata/java/tu
+#    Zip: /mydata/java/tu
+#  docker-gs:
+#    domain: http://172.11.1.1:9300(服务器ip:端口)
+#    path: /home/admin/test(文件在linux的存放地址)
+#    prefix: /statics
+#  docker-home:
+#    domain: http://172.11.1.1:9300(服务器ip:端口)
+#    path: /home/admin/test(文件在linux的存放地址)
+#    prefix: /statics

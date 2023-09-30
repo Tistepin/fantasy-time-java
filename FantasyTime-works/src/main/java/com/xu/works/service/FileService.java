@@ -32,4 +32,6 @@ public interface FileService {
     void removeFile(OSSRemovesVo url);
 
     List<String> policy4(String worksName , MultipartFile file);
+
+    Object GetLiunxFile();
 }

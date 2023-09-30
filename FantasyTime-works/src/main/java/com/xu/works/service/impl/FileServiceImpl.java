@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -147,6 +148,21 @@ public class FileServiceImpl implements FileService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Object GetLiunxFile() {
+        File file = null;
+        try {
+            file = ResourceUtils.getFile(path);
+        } catch (FileNotFoundException e) {
+            try {
+                file = ResourceUtils.getFile(path);
+            } catch (FileNotFoundException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return file.list();
     }
 
     /**

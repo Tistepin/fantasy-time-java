@@ -2,8 +2,8 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
-
+        server-addr:  172.24.177.140:8848
+    #        server-addr:  172.24.177.140:8848
     loadbalancer:
       retry:
         enabled: true
@@ -40,8 +40,8 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
 
-        - id: go_dialogue  #路由的ID，没有固定规则但要求唯一，建议配合服务名
-          uri: lb://go_dialogue
+        - id: go-dialogue  #路由的ID，没有固定规则但要求唯一，建议配合服务名
+          uri: lb://go-dialogue
           predicates:
             - Path=/GO/**      # 断言，路径相匹配的进行路由
           filters:

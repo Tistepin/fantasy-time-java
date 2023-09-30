@@ -129,12 +129,22 @@ public class OssController {
     //上传文件存储在本地的根路径
     @Value("${file.gs.path}")
     private String path;
-    @RequestMapping("/get")
+    @GetMapping("/get")
     public  HashMap<String, String> get() {
         HashMap<String, String> map = new HashMap<>();
         map.put("localFilePrefix",localFilePrefix);
         map.put("domain",domain);
         map.put("path",path);
         return map;
+    }
+    @GetMapping("/getLiunxFile")
+    public R GetLiunxFile(){
+      Object urls = fileService.GetLiunxFile();
+        if (urls!=null) {
+            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+            stringObjectHashMap.put("msg",urls);
+            return R.ok().data(stringObjectHashMap);
+        }
+        return R.error();
     }
 }

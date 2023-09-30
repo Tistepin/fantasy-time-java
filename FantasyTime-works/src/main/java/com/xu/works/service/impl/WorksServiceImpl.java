@@ -414,11 +414,16 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         //  根据作品类型id区分 小说和漫画 在人气表中 获取完本的 最高人气的前一百本  然后 sql算法拿出十本作品(works)的id
         List<String> popularityIds = popularityService.getPopularityTop(worksType);
         // 去作品表格中拿取集合里面的id的数据
-        return this.baseMapper.getClassicEnd(popularityIds).stream().map(item -> {
-            WorksVo worksVo = new WorksVo();
-            BeanUtils.copyProperties(item, worksVo);
-            return worksVo;
-        }).collect(Collectors.toList());
+        if (popularityIds.size()==0){
+            return new ArrayList<>();
+        }else{
+            this.baseMapper.getClassicEnd(popularityIds).stream().map(item -> {
+                WorksVo worksVo = new WorksVo();
+                BeanUtils.copyProperties(item, worksVo);
+                return worksVo;
+            }).collect(Collectors.toList());
+        }
+        return  new ArrayList<>();
     }
 
     /**
@@ -597,18 +602,24 @@ public class WorksServiceImpl extends ServiceImpl<WorksDao, WorksEntity> impleme
         List<String> worksIds = worksWatchHistoryService.getRecommendedTodayTop(worksType);
         // 2.根据查询出来的十本作品id查询分类 用set集合收集起来
         Set<String> set = new HashSet<>();
-        this.baseMapper.selectList(new QueryWrapper<WorksEntity>().select("works_category").eq("delete_status", 1).in("works_id", worksIds)).forEach(item -> {
-            // 获取该作品的分类  用,分割set收集
-            String worksCategory = item.getWorksCategory();
-            String[] split = worksCategory.split(",");
-            set.addAll(Arrays.asList(split));
-        });
-        // 根据分类 查询作品随机抽取十本
-        List<WorksVo> collect = this.baseMapper.getRecommendedToday(worksType, set).stream().map(item -> {
-            WorksVo worksVo = new WorksVo();
-            BeanUtils.copyProperties(item, worksVo);
-            return worksVo;
-        }).collect(Collectors.toList());
+        if (worksIds.size()!=0){
+            this.baseMapper.selectList(new QueryWrapper<WorksEntity>().select("works_category").eq("delete_status", 1).in("works_id", worksIds)).forEach(item -> {
+                // 获取该作品的分类  用,分割set收集
+                String worksCategory = item.getWorksCategory();
+                String[] split = worksCategory.split(",");
+                set.addAll(Arrays.asList(split));
+            });
+        }
+        List<WorksVo> collect = new ArrayList<>();
+        if (set.size()!=0){
+
+            // 根据分类 查询作品随机抽取十本
+            collect  = this.baseMapper.getRecommendedToday(worksType, set).stream().map(item -> {
+                WorksVo worksVo = new WorksVo();
+                BeanUtils.copyProperties(item, worksVo);
+                return worksVo;
+            }).collect(Collectors.toList());
+        }
         return collect;
     }
 
